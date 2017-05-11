@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+<category>
+    <pattern>^ contacto ^</pattern>
+    <template>
+        <think>
+            <set name="topic">contacto</set>
+            <set var="argumento"><star index="1"/> <star index="2"/></set>
+        </think>
+        <srai>FUNCION_REGLAS_CONTACTO <get var="argumento"/></srai>
+    </template>
+</category>
+<!-- CONTACTO -->
+<topic name="contacto">
+   <category>
+        <pattern>FUNCION_REGLAS_CONTACTO *</pattern>
+        <template>
+            <think>
+                <set var="aqui"><readset>agregar</readset></set>
+                <set var="palabra"><srai>ITERATE <star/></srai></set>
+            </think>
+            <condition var="palabra">
+                <li value="$">Esta opcion no esta disponible para los contactos.</li>
+                <li value="#"><srai>FUNCION_AGREGAR_CONTACTO</srai></li>
+                <li>
+                    <think>
+                        <set var="donde"><srai>FINDITEM <get var="palabra"/> IN <get var="aqui"/></srai></set>
+                    </think>
+                    <condition var="donde">
+                        <li value="0">
+                           <think>
+                               <set var="palabra"><srai>NEXT</srai></set>
+                           </think>
+                        </li>
+                        <li>
+                            <think>
+                                <set var="palabra">#</set>
+                            </think>
+                        </li>
+                    </condition>
+                    <loop/>
+                </li>
+            </condition>
+        </template>
+    </category>
+    
+    <!-- AGREGAR CONTACTO -->
+    <category>
+        <pattern>FUNCION_AGREGAR_CONTACTO</pattern>
+        <template>
+            Ingresa el APELLIDO del CONTACTO
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA EL APELLIDO DEL CONTACTO</that>
+        <template>
+           <think>
+               <set var="nombre"><map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map></set>
+           </think>
+           <condition var="nombre">
+               <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
+                    <think>
+                        <set name="apellido"><srai>ponerbarrabaja <star/></srai></set>
+                    </think>
+                    Ingresa el NOMBRE del CONTACTO
+               </li> 
+               <li>
+                   Error. El apellido ingresado ya se encuentra en la Agenda.
+                   <think>
+                       <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                   </think>
+               </li>
+           </condition>
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA EL NOMBRE DEL CONTACTO</that>
+        <template>
+           <think>
+               <set name="nombre"><srai>ponerbarrabaja <star/></srai></set>
+           </think>
+            Ingresa la DIRECCION del CONTACTO 
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA LA DIRECCION DEL CONTACTO</that>
+        <template>
+           <think>
+               <set name="direccion"><srai>ponerbarrabaja <star/></srai></set>
+           </think>
+            Ingresa el TELEFONO del CONTACTO 
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA EL TELEFONO DEL CONTACTO</that>
+        <template>
+            <think>
+                <set name="telefono"><srai>ponerbarrabaja <star/></srai></set> <!-->Se colocan '_' en los espacios</!-->
+                <!-->Añadimos los valores a los maps</!-->
+                <addtomap>
+                    <name>contacto_nombre</name>
+                    <key><get name="apellido"/></key>
+                    <value><get name="nombre"/></value>
+                </addtomap>
+                <addtomap>
+                    <name>contacto_direccion</name>
+                    <key><get name="apellido"/></key>
+                    <value><get name="direccion"/></value>
+                </addtomap>
+                <addtomap>
+                    <name>contacto_telefono</name>
+                    <key><get name="apellido"/></key>
+                    <value><get name="telefono"/></value>
+                </addtomap>
+                <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+            </think>
+            He agregado correctamente el contacto a tu agenda.
+        </template>
+    </category>
+    <!-- FIN AGREGAR CONTACTO -->
+    
+</topic>
+<!-- FIN CONTACTO -->
+<category>
+    <pattern>Cuantos contactos hay en la agenda</pattern>
+    <template><srai>COUNT <readkeys>contacto_nombre</readkeys></srai></template>
+</category>
+</aiml>

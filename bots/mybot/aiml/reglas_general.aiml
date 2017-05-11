@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+<!--
+    REGLAS ASOCIADAS AL SALUDO Y EL NOMBRE DEL USUARIO
+-->
+<category>
+    <pattern>^ Mi nombre es *</pattern>
+    <template>
+        <think><set name="usuario_nombre"><star index="2"/></set></think>
+        <get name="usuario_nombre"/>!! Buen nombre, yo me llamo <bot name="name"/>
+    </template>
+</category>
+<category>
+    <pattern>^ Me llamo *</pattern>
+    <template>
+        <think><set name="usuario_nombre"><star index="2"/></set></think>
+        <get name="usuario_nombre"/>!! Buen nombre, yo me llamo <bot name="name"/>
+    </template>
+</category>
+<category>
+    <pattern>* mi nombre</pattern>
+    <template>
+       <condition name="usuario_nombre">
+          <li value="unknown"> Aun no me dices tu nombre, como te llamas?</li>
+          <li>No recuerdas tu nombre? Te llamas <get name="usuario_nombre"/></li>
+       </condition>
+    </template>
+</category>
+<category>
+    <pattern>^ como me llamo</pattern>
+    <template>
+        <srai>* MI NOMBRE</srai>
+    </template>
+</category>
+<category>
+    <pattern>^ Hola+ ^</pattern>
+    <template>
+        Hola!! Como te llamas?
+    </template>
+</category>
+</aiml>

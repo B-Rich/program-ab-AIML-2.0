@@ -1,0 +1,9 @@
+url:http://www.alicebot.org
+name:MatiBot3000
+email:myBot@gmail.com
+gender:male
+botmaster:Matias	
+organization:ugr
+version:0.0.4
+
+
