@@ -1,3 +1,6 @@
 agregar
 nuevo
 ingresar
+añadir
+incluir
+registrar

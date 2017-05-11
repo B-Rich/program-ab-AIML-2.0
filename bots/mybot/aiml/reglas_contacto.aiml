@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
 <category>
-    <pattern>^ contacto ^</pattern>
+    <pattern>^ contacto+ ^</pattern>
     <template>
         <think>
             <set name="topic">contacto</set>
@@ -16,12 +16,44 @@
         <pattern>FUNCION_REGLAS_CONTACTO *</pattern>
         <template>
             <think>
-                <set var="aqui"><readset>agregar</readset></set>
+                <set var="archivo">agregar</set>
+                <set var="aqui"><readset><get var="archivo"/></readset></set>
                 <set var="palabra"><srai>ITERATE <star/></srai></set>
             </think>
             <condition var="palabra">
-                <li value="$">Esta opcion no esta disponible para los contactos.</li>
-                <li value="#"><srai>FUNCION_AGREGAR_CONTACTO</srai></li>
+                <li value="#NOENCONTRADO">Esta opcion no esta disponible para los contactos.</li>
+                <li value="$">
+                   <condition var="archivo">
+                       <li value="agregar">
+                            <think>
+                                <set var="archivo">modificar</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li value="modificar">
+                            <think>
+                                <set var="archivo">tamaño</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li value="tamaño">
+                            <think>
+                                <set var="archivo">listar</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li>
+                            <think>
+                                <set var="palabra">#NOENCONTRADO</set>
+                            </think>
+                       </li>
+                   </condition>
+                   <loop/>
+                </li>
+                <li value="#"><srai>FUNCION_<get var="archivo"/>_CONTACTO</srai></li>
                 <li>
                     <think>
                         <set var="donde"><srai>FINDITEM <get var="palabra"/> IN <get var="aqui"/></srai></set>
@@ -123,10 +155,72 @@
     </category>
     <!-- FIN AGREGAR CONTACTO -->
     
+    <!--> MODIFICAR CONTACTO</!-->
+    <category>
+        <pattern>FUNCION_MODIFICAR_CONTACTO</pattern>
+        <template>MODIFICANDO CONTACTO</template>
+    </category>
+    <!--> FIN MODIFICAR CONTACTO</!-->
+    
+    <!--> ENTREGAR TAMAÑO DE LA AGENDA</!-->
+    <category>
+        <think>
+            <set name="topic">unknown</set>
+        </think>
+        <pattern>FUNCION_TAMAÑO_CONTACTO</pattern>
+        <template><srai>COUNT <readkeys>contacto_nombre</readkeys></srai></template>
+    </category>
+    <!--> FIN ENTREGAR TAMAÑO DE LA AGENDA</!-->
+    
+    <!--> LISTAR CONTACTOS DE LA AGENDA</!-->
+    <category>
+        <think>
+            <set name="topic">unknown</set>
+        </think>
+        <pattern>FUNCION_LISTAR_CONTACTO</pattern>
+        <template>
+            <think>
+                <set var="apellido"><srai>ITERATE <readkeys>contacto_nombre</readkeys></srai></set>
+                <set var="tamaño"><srai>COUNT <readkeys>contacto_nombre</readkeys></srai></set>
+                <set var="resultado"></set>
+            </think>
+            <!-->Reviso si existen contactos en la agenda</!-->
+            <condition var="tamaño">
+                <li value="0">
+                    <think>
+                        <set var="resultado"><get var="resultado"/> No tienes contactos en tu agenda.</set>  
+                    </think>
+                </li>
+                <li>
+                   <!-->Si hay contactos, los almaceno en "resultado", avanzando con NEXT el ITERATOR</!-->
+                    <condition var="apellido">
+                        <li value="$"></li>
+                        <li>
+                            <think>
+                                <set var="resultado"><get var="resultado"/> , <get var="apellido"/></set>
+                                <set var="apellido"><srai>NEXT</srai></set>
+                            </think>
+                            <loop/>
+                        </li>
+                    </condition>
+                    <!-->Quito la primera coma</!-->
+                    <think>
+                        <set var="resultado"><srai>REMOVEITEM 1 IN <get var="resultado"/></srai></set>
+                    </think>
+                    
+                </li>
+            
+            </condition>
+            <!-->Arreglo el mensaje final, y lo muestro</!-->
+            <think>
+                <set var="resultado">Los contactos registrados en la agenda son: <get var="resultado"/></set>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <!--> FIN LISTAR CONTACTOS DE LA AGENDA</!-->
+    
 </topic>
 <!-- FIN CONTACTO -->
-<category>
-    <pattern>Cuantos contactos hay en la agenda</pattern>
-    <template><srai>COUNT <readkeys>contacto_nombre</readkeys></srai></template>
-</category>
+
 </aiml>
