@@ -160,17 +160,17 @@
         <pattern>FUNCION_MODIFICAR_CONTACTO</pattern>
         <template>MODIFICANDO CONTACTO</template>
     </category>
-    <!--> FIN MODIFICAR CONTACTO</!-->
-    
+
     <!--> ENTREGAR TAMAÑO DE LA AGENDA</!-->
     <category>
-        <think>
-            <set name="topic">unknown</set>
-        </think>
         <pattern>FUNCION_TAMAÑO_CONTACTO</pattern>
-        <template><srai>COUNT <readkeys>contacto_nombre</readkeys></srai></template>
+        <template>
+            <think>
+                <set name="topic">unknown</set>
+            </think>
+            <srai>COUNT <readkeys>contacto_nombre</readkeys></srai>
+        </template>
     </category>
-    <!--> FIN ENTREGAR TAMAÑO DE LA AGENDA</!-->
     
     <!--> LISTAR CONTACTOS DE LA AGENDA</!-->
     <category>
@@ -183,44 +183,32 @@
                 <set var="apellido"><srai>ITERATE <readkeys>contacto_nombre</readkeys></srai></set>
                 <set var="tamaño"><srai>COUNT <readkeys>contacto_nombre</readkeys></srai></set>
                 <set var="resultado"></set>
-            </think>
-            <!-->Reviso si existen contactos en la agenda</!-->
-            <condition var="tamaño">
-                <li value="0">
-                    <think>
-                        <set var="resultado"><get var="resultado"/> No tienes contactos en tu agenda.</set>  
-                    </think>
-                </li>
-                <li>
-                   <!-->Si hay contactos, los almaceno en "resultado", avanzando con NEXT el ITERATOR</!-->
-                    <condition var="apellido">
-                        <li value="$"></li>
-                        <li>
-                            <think>
-                                <set var="resultado"><get var="resultado"/> , <get var="apellido"/></set>
+                <!-->Reviso si existen contactos en la agenda</!-->
+                <condition var="tamaño">
+                    <li value="0">
+                        <set var="resultado"><get var="resultado"/> No tienes contactos en tu agenda.</set>
+                    </li>
+                    <li>
+                       <!-->Si hay contactos, los almaceno en "resultado", avanzando con NEXT el ITERATOR</!-->
+                        <condition var="apellido">
+                            <li value="$"></li>
+                            <li>
+                                <set var="resultado"><get var="resultado"/> , <srai>quitarespacios <get var="apellido"/></srai></set>
                                 <set var="apellido"><srai>NEXT</srai></set>
-                            </think>
-                            <loop/>
-                        </li>
-                    </condition>
-                    <!-->Quito la primera coma</!-->
-                    <think>
+                                <loop/>
+                            </li>
+                        </condition>
+                        <!-->Quito la primera coma</!-->
                         <set var="resultado"><srai>REMOVEITEM 1 IN <get var="resultado"/></srai></set>
-                    </think>
-                    
-                </li>
-            
-            </condition>
-            <!-->Arreglo el mensaje final, y lo muestro</!-->
-            <think>
+                    </li>
+                </condition>
+                <!-->Arreglo el mensaje final, y lo muestro</!-->
                 <set var="resultado">Los contactos registrados en la agenda son: <get var="resultado"/></set>
             </think>
             <get var="resultado"/>
         </template>
     </category>
-    <!--> FIN LISTAR CONTACTOS DE LA AGENDA</!-->
     
 </topic>
-<!-- FIN CONTACTO -->
 
 </aiml>
