@@ -1,0 +1,8 @@
+eliminar
+borrar
+eliminarme
+borrarme
+quitar
+sacar
+desligar
+suprimir

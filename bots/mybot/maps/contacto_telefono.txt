@@ -13,5 +13,5 @@ Apellido_Doce:Telefono_Doce
 Apellido_Trece:Telefono_Trece
 Apellido_Catorce:Telefono_Catorce
 Apellido_Quince:Telefono_Quince
-salinas_soto:+1234567
+salinas_soto:+5431543152
 soto_salinas:+54113214

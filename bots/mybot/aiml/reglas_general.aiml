@@ -32,10 +32,4 @@
         <srai>* MI NOMBRE</srai>
     </template>
 </category>
-<category>
-    <pattern>^ Hola+ ^</pattern>
-    <template>
-        Hola!! Como te llamas?
-    </template>
-</category>
 </aiml>

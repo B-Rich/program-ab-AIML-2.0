@@ -13,5 +13,5 @@ Apellido_Doce:Direccion_Doce
 Apellido_Trece:Direccion_Trece
 Apellido_Catorce:Direccion_Catorce
 Apellido_Quince:Direccion_Quince
-salinas_soto:avenida_andalucia
+salinas_soto:san_luis
 soto_salinas:Av_Andalucia_12345

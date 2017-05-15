@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- CUANDO NO INGRESAN NADA... NO DEBERIA NO ENTRAR A LAS REGLAS? -->
 <aiml version="2.0">
 <category>
     <pattern>^ contacto+ ^</pattern>
@@ -41,6 +42,13 @@
                        <li value="tamaño">
                             <think>
                                 <set var="archivo">listar</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li value="listar">
+                            <think>
+                                <set var="archivo">eliminar</set>
                                 <set var="aqui"><readset><get var="archivo"/></readset></set>
                                 <set var="palabra"><srai>ITERATE <star/></srai></set>
                             </think>
@@ -158,7 +166,74 @@
     <!--> MODIFICAR CONTACTO</!-->
     <category>
         <pattern>FUNCION_MODIFICAR_CONTACTO</pattern>
-        <template>MODIFICANDO CONTACTO</template>
+        <template>Indique el apellido del contacto a modificar</template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INDIQUE EL APELLIDO DEL CONTACTO A MODIFICAR</that>
+        <template>
+           <think>
+               <set var="nombre"><map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map></set>
+           </think>
+           <condition var="nombre">
+               <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
+                    El Contacto ingresado no se encuentra en la agenda.
+                    <think>
+                       <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                   </think>
+               </li>
+               <li>
+                   <think>
+                        <set name="apellido"><srai>ponerbarrabaja <star/></srai></set>
+                    </think>
+                    Quiere modificar la direccion o el telefono
+               </li>
+           </condition>
+        </template>
+    </category>
+    <category>
+        <pattern>^ direccion ^</pattern>
+        <that>QUIERE MODIFICAR LA DIRECCION O EL TELEFONO</that>
+        <template>
+            <think><set name="opcion">direccion</set></think>
+            Indique la direccion del contacto a modificar
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INDIQUE LA DIRECCION DEL CONTACTO A MODIFICAR</that>
+        <template>
+            <srai>MODIFICAR_UN_CONTACTO <star/></srai>
+        </template>
+    </category>
+    <category>
+        <pattern>^ telefono ^</pattern>
+        <that>QUIERE MODIFICAR LA DIRECCION O EL TELEFONO</that>
+        <template>
+            <think><set name="opcion">telefono</set></think>
+            Indique el telefono del contacto a modificar
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INDIQUE EL TELEFONO DEL CONTACTO A MODIFICAR</that>
+        <template>
+            <srai>MODIFICAR_UN_CONTACTO <star/></srai>
+        </template>
+    </category>
+    <category>
+        <pattern>MODIFICAR_UN_CONTACTO *</pattern>
+        <template>
+            <think>
+                <modifymap>
+                    <name>contacto_<get name="opcion"/></name>
+                    <key><get name="apellido"/></key>
+                    <value><srai>ponerbarrabaja <star/></srai></value>
+                </modifymap>
+                <set name="topic">unknown</set>
+            </think>
+            Se ha modificado el contacto.
+        </template>
     </category>
 
     <!--> ENTREGAR TAMAÑO DE LA AGENDA</!-->
@@ -174,12 +249,10 @@
     
     <!--> LISTAR CONTACTOS DE LA AGENDA</!-->
     <category>
-        <think>
-            <set name="topic">unknown</set>
-        </think>
         <pattern>FUNCION_LISTAR_CONTACTO</pattern>
         <template>
             <think>
+                <set name="topic">unknown</set>
                 <set var="apellido"><srai>ITERATE <readkeys>contacto_nombre</readkeys></srai></set>
                 <set var="tamaño"><srai>COUNT <readkeys>contacto_nombre</readkeys></srai></set>
                 <set var="resultado"></set>
@@ -209,6 +282,65 @@
         </template>
     </category>
     
+    <!--> ELIMINAR CONTACTOS DE LA AGENDA</!-->
+    <category>
+        <pattern>FUNCION_ELIMINAR_CONTACTO</pattern>
+        <template>Dime el apellido</template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>DIME EL APELLIDO</that>
+        <template>
+           <think>
+               <set var="nombre"><map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map></set>
+           </think>
+           <condition var="nombre">
+               <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
+                    El Contacto ingresado no se encuentra en la agenda.
+                    <think>
+                       <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                   </think>
+               </li>
+               <li>
+                   <think>
+                        <set name="apellido"><srai>ponerbarrabaja <star/></srai></set>
+                    </think>
+                    Estas seguro de eliminar el contacto
+               </li>
+           </condition>
+        </template>
+    </category>
+    <category>
+        <pattern>^ [si claro] ^</pattern>
+        <that>ESTAS SEGURO DE ELIMINAR EL CONTACTO</that>
+        <template>
+            <think>
+                <removefrommap>
+                    <name>contacto_direccion</name>
+                    <key><get name="apellido"/></key>
+                </removefrommap>
+                <removefrommap>
+                    <name>contacto_telefono</name>
+                    <key><get name="apellido"/></key>
+                </removefrommap>
+                <removefrommap>
+                    <name>contacto_nombre</name>
+                    <key><get name="apellido"/></key>
+                </removefrommap>
+                <set name="topic">unknown</set>
+            </think>
+            Perfecto, contacto <get name="apellido"/> eliminado.
+        </template>
+    </category>
+    <category>
+        <pattern>^ [no arrepenti nunca] ^</pattern>
+        <that>ESTAS SEGURO DE ELIMINAR UN CONTACTO</that>
+        <template>
+            Esta bien, el contacto no fue eliminado.
+            <think><set name="topic">unknown</set></think>
+        </template>
+    </category>
+
 </topic>
 
 </aiml>
