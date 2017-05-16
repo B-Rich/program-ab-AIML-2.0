@@ -549,6 +549,27 @@
 				<set var="tmp"><rest><get var="tmp"/></rest></set>
 				<loop/>
 			</li>
+			<li value="-">
+				<set var="solucion"><get var="solucion"/> <get var="palabra"/></set>
+				<set var="palabra"></set>
+				<set var="caracter"><first><get var="tmp"/></first></set>
+				<set var="tmp"><rest><get var="tmp"/></rest></set>
+				<loop/>
+			</li>
+			<li value="/">
+				<set var="solucion"><get var="solucion"/> <get var="palabra"/></set>
+				<set var="palabra"></set>
+				<set var="caracter"><first><get var="tmp"/></first></set>
+				<set var="tmp"><rest><get var="tmp"/></rest></set>
+				<loop/>
+			</li>
+			<li value=":">
+				<set var="solucion"><get var="solucion"/> <get var="palabra"/></set>
+				<set var="palabra"></set>
+				<set var="caracter"><first><get var="tmp"/></first></set>
+				<set var="tmp"><rest><get var="tmp"/></rest></set>
+				<loop/>
+			</li>
 			<li>
 				<set var="palabra"><get var="palabra"/><get var="caracter"/></set>
 				<set var="caracter"><first><get var="tmp"/></first></set>
@@ -581,5 +602,53 @@
 	  </think>
 	<get var="solucion"/>
 	</template>
+	</category>
+
+	<!-->Validar fecha CUSTOM</!-->
+	<category>
+	    <pattern>validarfechacustom * * *</pattern>
+	    <template>
+	        <think>
+                <set var="resultado"></set>
+	            <set var="dia"><star index="1"/></set>
+	            <set var="mes"><star index="2"/></set>
+	            <set var="año"><map name="fecha_años"><star index="3"/></map></set>
+	            <condition var="año">
+	                <li value="unknown">
+	                    <set var="resultado">NO</set>
+	                </li>
+	                <li>
+                        <set var="aux"><map name="fecha_dias"><get var="dia"/></map></set>
+                        <condition var="aux">
+                            <li value="unknown">
+                                <set var="resultado">NO</set>
+                            </li>
+                            <li>
+                                <set var="aux"><map name="fecha_meses"><get var="mes"/></map></set>
+                                <condition var="aux">
+                                    <li value="unknown">
+                                        <set var="resultado">NO</set>
+                                    </li>
+                                    <li>
+                                        <set var="resultado">
+                                            <srai>VALIDDATE <get var="dia"/> <get var="mes"/> <get var="año"/></srai>
+                                        </set>
+                                        <condition var="resultado">
+                                            <li value="NO"></li>
+                                            <li>
+                                                <set var="resultado">
+                                                    <get var="dia"/>_<get var="mes"/>_<get var="año"/>
+                                                </set>
+                                            </li>
+                                        </condition>
+                                    </li>
+                                </condition>
+                            </li>
+                        </condition>
+	                </li>
+	            </condition>
+	        </think>
+	        <get var="resultado"/>
+	    </template>
 	</category>
 </aiml>

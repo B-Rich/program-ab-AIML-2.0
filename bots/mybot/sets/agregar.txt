@@ -4,3 +4,4 @@ ingresar
 añadir
 incluir
 registrar
+crear

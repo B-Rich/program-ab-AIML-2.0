@@ -1,7 +1,190 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
 <category>
-    <pattern>Hola *</pattern>
-    <template>Hola!! <star/></template>
+    <pattern>^ evento+ ^</pattern>
+    <template>
+        <think>
+            <set name="topic">evento</set>
+            <set var="argumento"><star index="1"/> <star index="2"/></set>
+        </think>
+        <srai>FUNCION_REGLAS_EVENTO <get var="argumento"/></srai>
+    </template>
 </category>
+<topic name="evento">
+    <category>
+        <pattern>FUNCION_REGLAS_EVENTO *</pattern>
+        <template>
+            <think>
+                <set var="archivo">agregar</set>
+                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                <set var="palabra"><srai>ITERATE <star/></srai></set>
+            </think>
+            <condition var="palabra">
+                <li value="#NOENCONTRADO">Esta opcion no esta disponible para los Eventos.</li>
+                <li value="$">
+                   <condition var="archivo">
+                       <li value="agregar">
+                            <think>
+                                <set var="archivo">modificar</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li value="modificar">
+                            <think>
+                                <set var="archivo">eliminar</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li>
+                            <think>
+                                <set var="palabra">#NOENCONTRADO</set>
+                            </think>
+                       </li>
+                   </condition>
+                   <loop/>
+                </li>
+                <li value="#"><srai>FUNCION_<get var="archivo"/>_EVENTO</srai></li>
+                <li>
+                    <think>
+                        <set var="donde"><srai>FINDITEM <get var="palabra"/> IN <get var="aqui"/></srai></set>
+                    </think>
+                    <condition var="donde">
+                        <li value="0">
+                           <think>
+                               <set var="palabra"><srai>NEXT</srai></set>
+                           </think>
+                        </li>
+                        <li>
+                            <think>
+                                <set var="palabra">#</set>
+                            </think>
+                        </li>
+                    </condition>
+                    <loop/>
+                </li>
+            </condition>
+        </template>
+    </category>
+    <!-->Agregar Evento</!-->
+    <category>
+        <pattern>FUNCION_AGREGAR_EVENTO</pattern>
+        <template>
+            Ingresa el NOMBRE del EVENTO
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA EL NOMBRE DEL EVENTO</that>
+        <template>
+            <think>
+                <set name="nombre_evento"><star/></set>
+            </think>
+            Ingresa la FECHA del EVENTO
+        </template>
+    </category>
+    <category>
+        <pattern>* de * del *</pattern>
+        <that>INGRESA LA FECHA DEL EVENTO</that>
+        <template>
+            <srai>
+                AGREGAR_FECHA_EVENTO <star index="1"/> <map name="fecha_meses"><star index="2"/></map> <star index="3"/>
+            </srai>
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA LA FECHA DEL EVENTO</that>
+        <template>
+            <srai>AGREGAR_FECHA_EVENTO <star/></srai>
+        </template>
+    </category>
+    <category>
+        <pattern>AGREGAR_FECHA_EVENTO *</pattern>
+        <that>INGRESA LA FECHA DEL EVENTO</that>
+        <template>
+            <think>
+                <set name="fecha_evento"><srai>quitarespacios <srai>ponerbarrabaja <star/></srai></srai></set>
+                <set var="validate"><srai>validarfechacustom <get name="fecha_evento"/></srai></set>
+                <condition var="validate">
+                    <li value="NO">
+                        <set var="resultado">Fecha no valida. Accion cancelada.</set>
+                        <set name="topic">unknown</set>
+                    </li>
+                    <li>
+                        <set var="resultado">Ingresa la HORA del EVENTO</set>
+                        <set name="fecha_evento"><get var="validate"/></set>
+                    </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA LA HORA DEL EVENTO</that>
+        <template>
+            <think>
+                <set name="hora_evento">
+                    <map name="evento_horas">
+                        <srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai>
+                    </map>
+                </set>
+                <condition name="hora_evento">
+                    <li value="unknown">
+                        <set var="resultado">Hora invalida. Accion cancelada.</set>
+                        <set name="topic">unknown</set>
+                    </li>
+                    <li>
+                        <set var="resultado">Evento Creado. Quieres asociar un contacto al evento</set>
+                        <set var="creado"><map name="evento"><get name="fecha_evento"/></map></set>
+                        <condition var="creado">
+                            <li value="unknown">
+                                <addtomap>
+                                    <name>evento</name>
+                                    <key><get name="fecha_evento"/></key>
+                                    <value>null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null</value>
+                                </addtomap>
+                                <set var="resultado"><get var="resultado"/> Fecha Creada.</set>
+                            </li>
+                            <li>
+                                <set var="resultado"><get var="resultado"/> Fecha existe.</set>
+                            </li>
+                        </condition>
+
+                    </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <category>
+        <pattern>^ No ^</pattern>
+        <that>QUIERES ASOCIAR UN CONTACTO AL EVENTO</that>
+        <template>
+            Perfecto.
+            <think>
+                <set name="topic">unknown</set>
+            </think>
+        </template>
+    </category>
+    <category>
+        <pattern>^ Si ^</pattern>
+        <that>QUIERES ASOCIAR UN CONTACTO AL EVENTO</that>
+        <template>
+            Quien es el contacto
+        </template>
+    </category>
+    <!--> FALTAAAAAA AGREGAR UN NUEVO CONTACTO</!-->
+    <category>
+        <pattern>*</pattern>
+        <that>QUIEN ES EL CONTACTO</that>
+        <template>
+            Contacto agregado.
+            <srai>AGREGAR UN NUEVO CONTACTO AL EVENTO</srai>
+        </template>
+    </category>
+
+</topic>
 </aiml>

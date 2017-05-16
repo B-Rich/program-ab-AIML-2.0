@@ -2,3 +2,4 @@ cuantos
 cuanto
 tamaño
 cantidad
+contar
