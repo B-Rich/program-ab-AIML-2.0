@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
+<!-->REGLA DE AGREGAR, MODIFICAR, LISTAR, Y ELIMINAR CONTACTO</!-->
 <category>
     <pattern>^ contacto+ ^</pattern>
     <template>
@@ -8,6 +9,37 @@
             <set var="argumento"><star index="1"/> <star index="2"/></set>
         </think>
         <srai>FUNCION_REGLAS_CONTACTO <get var="argumento"/></srai>
+    </template>
+</category>
+<!-->REGLAS DE BUSQUEDA</!-->
+<category>
+    <pattern>^ direccion ^ de *</pattern>
+    <template>
+        <think>
+            <set name="busqueda">direccion</set>
+            <set name="topic">contacto</set>
+        </think>
+        <srai>FUNCION_BUSQUEDA <star index="3"/></srai>
+    </template>
+</category>
+<category>
+    <pattern>^ nombre ^ de *</pattern>
+    <template>
+        <think>
+            <set name="busqueda">nombre</set>
+            <set name="topic">contacto</set>
+        </think>
+        <srai>FUNCION_BUSQUEDA <star index="3"/></srai>
+    </template>
+</category>
+<category>
+    <pattern>^ telefono ^ de *</pattern>
+    <template>
+        <think>
+            <set name="busqueda">telefono</set>
+            <set name="topic">contacto</set>
+        </think>
+        <srai>FUNCION_BUSQUEDA <star index="3"/></srai>
     </template>
 </category>
 <!-- CONTACTO -->
@@ -348,7 +380,38 @@
             <think><set name="topic">unknown</set></think>
         </template>
     </category>
-
+    <!--> BUSQUEDA</!-->
+    <category>
+        <pattern>FUNCION_BUSQUEDA *</pattern>
+        <template>
+           <think>
+               <set var="resultado">
+                  <condition name="busqueda">
+                      <li value="direccion">
+                          <map name="contacto_direccion"><srai>ponerbarrabaja <star/></srai></map>
+                      </li>
+                      <li value="nombre">
+                          <map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map>
+                      </li>
+                      <li value="telefono">
+                          <map name="contacto_telefono"><srai>ponerbarrabaja <star/></srai></map>
+                      </li>
+                  </condition>
+               </set>
+           </think>
+           <condition var="resultado">
+               <li value="unknown">
+                   El contacto no existe.
+               </li>
+               <li>
+                  <get name="busqueda"/> de <star/>: <get var="resultado"/>
+               </li>
+           </condition>
+           <think>
+               <set name="topic">unknown</set>
+           </think>
+        </template>
+    </category>
 </topic>
 
 </aiml>
