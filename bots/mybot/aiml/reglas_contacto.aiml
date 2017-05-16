@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- CUANDO NO INGRESAN NADA... NO DEBERIA NO ENTRAR A LAS REGLAS? -->
 <aiml version="2.0">
 <category>
     <pattern>^ contacto+ ^</pattern>
@@ -83,7 +82,6 @@
             </condition>
         </template>
     </category>
-    
     <!-- AGREGAR CONTACTO -->
     <category>
         <pattern>FUNCION_AGREGAR_CONTACTO</pattern>
@@ -95,23 +93,37 @@
         <pattern>*</pattern>
         <that>INGRESA EL APELLIDO DEL CONTACTO</that>
         <template>
-           <think>
-               <set var="nombre"><map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map></set>
-           </think>
-           <condition var="nombre">
-               <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
-                    <think>
-                        <set name="apellido"><srai>ponerbarrabaja <star/></srai></set>
-                    </think>
-                    Ingresa el NOMBRE del CONTACTO
-               </li> 
-               <li>
-                   Error. El apellido ingresado ya se encuentra en la Agenda.
+          <think>
+             <set var="a"><star/></set>
+          </think>
+           <condition var="a">
+               <li value="NORESP">
+                   Error. El apellido ingresado no es valido
                    <think>
                        <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
                    </think>
                </li>
-           </condition>
+               <li>
+                   <think>
+                       <set var="nombre"><map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map></set>
+                   </think>
+                   <condition var="nombre">
+                       <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
+                            <think>
+                                <set name="apellido"><srai>ponerbarrabaja <star/></srai></set>
+                            </think>
+                            Ingresa el NOMBRE del CONTACTO
+                       </li>
+                       <li>
+                           Error. El apellido ingresado ya se encuentra en la Agenda.
+                           <think>
+                               <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                           </think>
+                       </li>
+                   </condition>
+               </li>
+            </condition>
+
         </template>
     </category>
     <category>
@@ -161,8 +173,6 @@
             He agregado correctamente el contacto a tu agenda.
         </template>
     </category>
-    <!-- FIN AGREGAR CONTACTO -->
-    
     <!--> MODIFICAR CONTACTO</!-->
     <category>
         <pattern>FUNCION_MODIFICAR_CONTACTO</pattern>
@@ -235,7 +245,6 @@
             Se ha modificado el contacto.
         </template>
     </category>
-
     <!--> ENTREGAR TAMAÑO DE LA AGENDA</!-->
     <category>
         <pattern>FUNCION_TAMAÑO_CONTACTO</pattern>
@@ -246,7 +255,6 @@
             <srai>COUNT <readkeys>contacto_nombre</readkeys></srai>
         </template>
     </category>
-    
     <!--> LISTAR CONTACTOS DE LA AGENDA</!-->
     <category>
         <pattern>FUNCION_LISTAR_CONTACTO</pattern>
@@ -281,7 +289,6 @@
             <get var="resultado"/>
         </template>
     </category>
-    
     <!--> ELIMINAR CONTACTOS DE LA AGENDA</!-->
     <category>
         <pattern>FUNCION_ELIMINAR_CONTACTO</pattern>
@@ -314,6 +321,7 @@
         <pattern>^ [si claro] ^</pattern>
         <that>ESTAS SEGURO DE ELIMINAR EL CONTACTO</that>
         <template>
+           <get name="apellido"/>
             <think>
                 <removefrommap>
                     <name>contacto_direccion</name>
