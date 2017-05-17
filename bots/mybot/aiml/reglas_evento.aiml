@@ -79,12 +79,13 @@
         <that>INGRESA EL NOMBRE DEL EVENTO</that>
         <template>
             <think>
-                <set name="nombre_evento"><star/></set>
+                <set name="nombre_evento"><srai>ponerbarrabaja <star/></srai></set>
             </think>
             Ingresa la FECHA del EVENTO
         </template>
     </category>
     <category>
+       <!-->Cuando se escribe: "20 de Enero del 2017"</!-->
         <pattern>* de * del *</pattern>
         <that>INGRESA LA FECHA DEL EVENTO</that>
         <template>
@@ -105,6 +106,7 @@
         <that>INGRESA LA FECHA DEL EVENTO</that>
         <template>
             <think>
+               <!-->La fecha se deja en forma 12 10 2017, y despues en validate se revisa que sea valida, y se deja en 12_10_2017</!-->
                 <set name="fecha_evento"><srai>quitarespacios <srai>ponerbarrabaja <star/></srai></srai></set>
                 <set var="validate"><srai>validarfechacustom <get name="fecha_evento"/></srai></set>
                 <condition var="validate">
@@ -126,33 +128,44 @@
         <that>INGRESA LA HORA DEL EVENTO</that>
         <template>
             <think>
-                <set name="hora_evento">
-                    <map name="evento_horas">
-                        <srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai>
+               <!-->Se revisa que la hora sea valida, y se crea el evento</!-->
+                <set name="hora_evento"><srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai></set>
+                <set name="pos_hora">
+                    <map name="fecha_horas">
+                        <get name="hora_evento"/>
                     </map>
                 </set>
-                <condition name="hora_evento">
+                <condition name="pos_hora">
                     <li value="unknown">
                         <set var="resultado">Hora invalida. Accion cancelada.</set>
                         <set name="topic">unknown</set>
                     </li>
                     <li>
-                        <set var="resultado">Evento Creado. Quieres asociar un contacto al evento</set>
                         <set var="creado"><map name="evento"><get name="fecha_evento"/></map></set>
+                        <set var="listado">null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null</set>
+                        <!-->Se revisa si la fecha ya esta creada</!-->
                         <condition var="creado">
                             <li value="unknown">
                                 <addtomap>
                                     <name>evento</name>
                                     <key><get name="fecha_evento"/></key>
-                                    <value>null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null</value>
+                                    <value><get var="listado"/></value>
                                 </addtomap>
-                                <set var="resultado"><get var="resultado"/> Fecha Creada.</set>
                             </li>
                             <li>
-                                <set var="resultado"><get var="resultado"/> Fecha existe.</set>
+                                <set var="listado"><get var="creado"/></set>
                             </li>
                         </condition>
-
+                        <!-->Se actualiza el archivo en la posicion de la hora, y se coloca el nombre del evento</!-->
+                        <set var="listado">
+                            <srai>CHANGEITEM <get name="pos_hora"/> BY <get name="nombre_evento"/> IN <get var="listado"/></srai>
+                        </set>
+                        <modifymap>
+                            <name>evento</name>
+                            <key><get name="fecha_evento"/></key>
+                            <value><get var="listado"/></value>
+                        </modifymap>
+                        <set var="resultado">Evento Creado. Quieres asociar un contacto al evento</set>
                     </li>
                 </condition>
             </think>
@@ -160,8 +173,8 @@
         </template>
     </category>
     <category>
-        <pattern>^ No ^</pattern>
-        <that>QUIERES ASOCIAR UN CONTACTO AL EVENTO</that>
+        <pattern>^ [No Nunca] ^</pattern>
+        <that>EVENTO CREADO. QUIERES ASOCIAR UN CONTACTO AL EVENTO</that>
         <template>
             Perfecto.
             <think>
@@ -170,8 +183,8 @@
         </template>
     </category>
     <category>
-        <pattern>^ Si ^</pattern>
-        <that>QUIERES ASOCIAR UN CONTACTO AL EVENTO</that>
+        <pattern>^ [Si claro ok] ^</pattern>
+        <that>EVENTO CREADO. QUIERES ASOCIAR UN CONTACTO AL EVENTO</that>
         <template>
             Quien es el contacto
         </template>
