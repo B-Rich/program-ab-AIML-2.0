@@ -156,16 +156,28 @@
                                 <set var="listado"><get var="creado"/></set>
                             </li>
                         </condition>
-                        <!-->Se actualiza el archivo en la posicion de la hora, y se coloca el nombre del evento</!-->
-                        <set var="listado">
-                            <srai>CHANGEITEM <get name="pos_hora"/> BY <get name="nombre_evento"/> IN <get var="listado"/></srai>
+                        <set var="creado">
+                            <srai>SELECTITEM <get name="pos_hora"/> IN <get var="listado"/></srai>
                         </set>
-                        <modifymap>
-                            <name>evento</name>
-                            <key><get name="fecha_evento"/></key>
-                            <value><get var="listado"/></value>
-                        </modifymap>
-                        <set var="resultado">Evento Creado. Quieres asociar un contacto al evento</set>
+                        <condition var="creado">
+                            <li value="null">
+                                <!-->Se actualiza el archivo en la posicion de la hora si es que no habia un evento, y se coloca el nombre del evento</!-->
+                                <set var="listado">
+                                    <srai>CHANGEITEM <get name="pos_hora"/> BY <get name="nombre_evento"/> IN <get var="listado"/></srai>
+                                </set>
+                                <modifymap>
+                                    <name>evento</name>
+                                    <key><get name="fecha_evento"/></key>
+                                    <value><get var="listado"/></value>
+                                </modifymap>
+                                <set var="resultado">Evento Creado. Quieres asociar un contacto al evento</set>
+                            </li>
+                            <li>
+                                <set var="resultado">Ya existe un evento a esa hora en este dia.</set>
+                                <set name="topic">unknown</set>
+                            </li>
+                        </condition>
+
                     </li>
                 </condition>
             </think>
