@@ -399,7 +399,6 @@
                                 <set var="resultado">No hay eventos este dia.</set>
                             </li>
                             <li value="TRUE">
-                                <!-->Quito la primera coma</!-->
                                 <set var="resultado">Tienes <srai>COUNT <get var="resultado"/></srai> Eventos ese dia.</set>
                             </li>
                         </condition>
