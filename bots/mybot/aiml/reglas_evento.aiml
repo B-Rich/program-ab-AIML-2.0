@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
-<topic name="unknown">
    <category>
         <pattern>^ evento+ ^</pattern>
         <template>
@@ -11,7 +10,6 @@
             <srai>FUNCION_REGLAS_EVENTO <get name="argumento"/></srai>
         </template>
     </category>
-</topic>
 
 <topic name="evento">
     <category>
@@ -43,6 +41,13 @@
                        <li value="eliminar">
                             <think>
                                 <set var="archivo">listar</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li value="listar">
+                            <think>
+                                <set var="archivo">tamaño</set>
                                 <set var="aqui"><readset><get var="archivo"/></readset></set>
                                 <set var="palabra"><srai>ITERATE <star/></srai></set>
                             </think>
@@ -335,6 +340,67 @@
                             <li value="TRUE">
                                 <!-->Quito la primera coma</!-->
                                 <set var="resultado">Tus eventos son: <srai>REMOVEITEM 1 IN <get var="resultado"/></srai></set>
+                            </li>
+                        </condition>
+                    </li>
+                </condition>
+                <set name="topic">unknown</set>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <!-->Tamaño Eventos</!-->
+    <category>
+        <pattern>FUNCION_TAMAÑO_EVENTO</pattern>
+        <template><srai>FUNCION_TAMAÑO_EVENTO2 <get name="argumento"/></srai></template>
+    </category>
+    <category>
+       <!-->EJ: que eventos tengo el dia 20 de mayo del 2017</!-->
+        <pattern>FUNCION_TAMAÑO_EVENTO2 ^ dia * de * del *</pattern>
+        <template>
+            <srai>
+                FUNCION_TAMAÑO_EVENTO2 dia <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
+            </srai>
+        </template>
+    </category>
+    <category>
+        <pattern>FUNCION_TAMAÑO_EVENTO2 ^ dia *</pattern>
+        <template>
+            <think>
+               <!-->La fecha se deja en forma 12 10 2017, y despues en validate se revisa que sea valida, y se deja en 12_10_2017</!-->
+                <set var="fecha_evento"><srai>quitarespacios <srai>ponerbarrabaja <star index="2"/></srai></srai></set>
+                <set var="validate"><srai>validarfechacustom <get var="fecha_evento"/></srai></set>
+                <condition var="validate">
+                    <li value="NO">
+                        <set var="resultado">Fecha no valida. Accion cancelada.</set>
+                    </li>
+                    <li>
+                        <set var="fecha_evento"><get var="validate"/></set>
+                        <set var="evento"><srai>ITERATE <map name="evento"><get var="fecha_evento"/></map></srai></set>
+                        <set var="resultado"></set>
+                        <set var="flag">FALSE</set>
+                        <condition var="evento">
+                            <li value="$"></li>
+                            <li value="unknown"></li>
+                            <li value="null">
+                                <set var="evento"><srai>NEXT</srai></set>
+                                <loop/>
+                            </li>
+                            <li>
+                                <set var="flag">TRUE</set>
+                                <set var="resultado"><get var="resultado"/> <get var="evento"/></set>
+                                <set var="evento"><srai>NEXT</srai></set>
+                                <loop/>
+                            </li>
+                        </condition>
+
+                        <condition var="flag">
+                            <li value="FALSE">
+                                <set var="resultado">No hay eventos este dia.</set>
+                            </li>
+                            <li value="TRUE">
+                                <!-->Quito la primera coma</!-->
+                                <set var="resultado">Tienes <srai>COUNT <get var="resultado"/></srai> Eventos ese dia.</set>
                             </li>
                         </condition>
                     </li>
