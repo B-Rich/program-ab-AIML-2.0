@@ -32,4 +32,10 @@
         <srai>* MI NOMBRE</srai>
     </template>
 </category>
+<category>
+    <pattern>abcdf</pattern>
+    <template>
+        <map name="evento_persona">21_06_2017_16_00</map>
+    </template>
+</category>
 </aiml>

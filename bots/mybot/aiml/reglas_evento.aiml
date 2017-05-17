@@ -85,7 +85,6 @@
         </template>
     </category>
     <category>
-       <!-->Cuando se escribe: "20 de Enero del 2017"</!-->
         <pattern>* de * del *</pattern>
         <that>INGRESA LA FECHA DEL EVENTO</that>
         <template>
@@ -170,7 +169,12 @@
                                     <key><get name="fecha_evento"/></key>
                                     <value><get var="listado"/></value>
                                 </modifymap>
-                                <set var="resultado">Evento Creado. Quieres asociar un contacto al evento</set>
+                                <addtomap>
+                                    <name>evento_persona</name>
+                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                    <value></value>
+                                </addtomap>
+                                <set var="resultado">Quieres asociar un contacto al evento</set>
                             </li>
                             <li>
                                 <set var="resultado">Ya existe un evento a esa hora en este dia.</set>
@@ -186,7 +190,7 @@
     </category>
     <category>
         <pattern>^ [No Nunca] ^</pattern>
-        <that>EVENTO CREADO. QUIERES ASOCIAR UN CONTACTO AL EVENTO</that>
+        <that>QUIERES ASOCIAR UN (NUEVO) CONTACTO AL EVENTO</that>
         <template>
             Perfecto.
             <think>
@@ -196,7 +200,7 @@
     </category>
     <category>
         <pattern>^ [Si claro ok] ^</pattern>
-        <that>EVENTO CREADO. QUIERES ASOCIAR UN CONTACTO AL EVENTO</that>
+        <that>QUIERES ASOCIAR UN (NUEVO) CONTACTO AL EVENTO</that>
         <template>
             Quien es el contacto
         </template>
@@ -206,8 +210,68 @@
         <pattern>*</pattern>
         <that>QUIEN ES EL CONTACTO</that>
         <template>
-            Contacto agregado.
-            <srai>AGREGAR UN NUEVO CONTACTO AL EVENTO</srai>
+            <srai>AGREGAR UN NUEVO CONTACTO AL EVENTO <star/></srai>
+        </template>
+    </category>
+    <category>
+        <pattern>AGREGAR UN NUEVO CONTACTO AL EVENTO *</pattern>
+        <template>
+            <think>
+                <set var="a"><star/></set>
+                <condition var="a">
+                   <li value="NORESP">
+                       <set var="resultado">Error. El apellido ingresado no es valido</set>
+                        <set name="topic">unknown</set>
+                   </li>
+                   <li>
+                        <set var="nombre"><map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map></set>
+                       <condition var="nombre">
+                           <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
+                                <set var="resultado">El contacto no existe en la agenda.</set>
+                                <set name="topic">unknown</set>
+                           </li>
+                           <li>
+                                <set var="apellido"><srai>ponerbarrabaja <star/></srai></set>
+                                <set var="contactos_en_evento">
+                                    <map name="evento_persona"><get name="fecha_evento"/>_<get name="hora_evento"/></map>
+                                </set>
+                                <!-->contador para cuando no hay contactos en evento</!-->
+                                <set var="contador">
+                                    <srai>COUNT <get var="contactos_en_evento"/></srai>
+                                </set>
+                                <condition var="contador">
+                                    <li value="0">
+                                        <set var="encontrado">0</set>
+                                    </li>
+                                    <li>
+                                       <!-->Si no esta vacio, se busca si ya esta el contacto</!-->
+                                        <set var="encontrado">
+                                            <srai>FINDITEM <get var="apellido"/> IN <get var="contactos_en_evento"/></srai>
+                                        </set>
+                                    </li>
+                                </condition>
+                                <condition var="encontrado">
+                                    <li value="0">
+                                       <!-->Si no esta, se agrega</!-->
+                                        <modifymap>
+                                            <name>evento_persona</name>
+                                            <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                            <value><get var="contactos_en_evento"/> <get var="apellido"/></value>
+                                        </modifymap>
+                                        <set var="resultado">Quieres asociar un nuevo contacto al evento</set>
+                                    </li>
+                                    <li>
+                                        <set var="resultado">El contacto ya se encuentra en el evento.</set>
+                                        <set name="topic">unknown</set>
+                                    </li>
+                                </condition>
+
+                           </li>
+                       </condition>
+                   </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
         </template>
     </category>
 

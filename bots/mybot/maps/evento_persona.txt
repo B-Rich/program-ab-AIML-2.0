@@ -1,8 +1,28 @@
-20_06_2017_09_00:Apellido_Uno Apellido_Dos Apellido_Seis Apellido_Doce
-20_06_2017_12_00:Apellido_Cuatro Apellido_Tres Apellido_Quince Apellido_Seis
-20_06_2017_16_00:Apellido_Uno Apellido_Dos Apellido_Seis Apellido_Doce
-20_06_2017_23_30:Apellido_Cuatro Apellido_Tres Apellido_Quince Apellido_Seis
-21_06_2017_09_00:Apellido_Cuatro Apellido_Tres Apellido_Quince Apellido_Seis
-21_06_2017_12_00:Apellido_Uno Apellido_Dos Apellido_Seis Apellido_Doce
-21_06_2017_16_00:Apellido_Cuatro Apellido_Tres Apellido_Quince Apellido_Seis
-21_06_2017_23_30:Apellido_Uno Apellido_Dos Apellido_Seis Apellido_Doce
+20_6_2017_09_00:Apellido_Uno Apellido_Dos Apellido_Seis Apellido_Doce
+20_6_2017_12_00:Apellido_Cuatro Apellido_Tres Apellido_Quince Apellido_Seis
+20_6_2017_16_00:Apellido_Uno Apellido_Dos Apellido_Seis Apellido_Doce
+20_6_2017_23_30:Apellido_Cuatro Apellido_Tres Apellido_Quince Apellido_Seis
+21_6_2017_09_00:Apellido_Cuatro Apellido_Tres Apellido_Quince Apellido_Seis
+21_6_2017_12_00:Apellido_Uno Apellido_Dos Apellido_Seis Apellido_Doce
+21_6_2017_16_00:Apellido_Cuatro Apellido_Tres Apellido_Quince Apellido_Seis
+21_6_2017_23_30:
+21_6_2017_00_00:
+17_5_2017_13_00:
+17_5_2017_00_30:
+17_5_2017_00_00:
+17_5_2017_01_00:
+17_5_2017_04_30:
+17_5_2017_05_00:
+17_5_2017_08_00:
+17_5_2017_10_00:
+17_5_2017_14_30:
+17_5_2017_16_30:
+17_5_2017_12_30:
+17_5_2017_19_00:
+17_5_2017_23_00:
+17_5_2017_16_00:
+17_5_2017_05_30:
+17_5_2017_18_00:
+21_06_2017_16_00:
+17_5_2017_22_00:salinas_soto saavedra
+17_5_2017_18_30:salinas_sotosaavedra
