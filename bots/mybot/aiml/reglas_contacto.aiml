@@ -5,10 +5,20 @@
     <pattern>^ contacto+ ^</pattern>
     <template>
         <think>
-            <set name="topic">contacto</set>
             <set var="argumento"><star index="1"/> <star index="2"/></set>
+            <set var="aux"><response index="1" /></set>
         </think>
-        <srai>FUNCION_REGLAS_CONTACTO <get var="argumento"/></srai>
+        <!-->Esta condicional cuando se desea modificar un contacto de los eventos, ya que generaba conflictos</!-->
+        <condition var="aux">
+            <li value="Desea modificar el titulo, la fecha, la hora, o un contacto">
+                <srai>AGREGAR_CONTACTO_EVENTO</srai>
+            </li>
+            <li>
+                <think><set name="topic">contacto</set></think>
+                <srai>FUNCION_REGLAS_CONTACTO <get var="argumento"/></srai>
+            </li>
+        </condition>
+
     </template>
 </category>
 <!-->REGLAS DE BUSQUEDA</!-->

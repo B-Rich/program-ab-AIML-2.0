@@ -294,7 +294,6 @@
         <template><srai>FUNCION_LISTAR_EVENTO2 <get name="argumento"/></srai></template>
     </category>
     <category>
-       <!-->EJ: que eventos tengo el dia 20 de mayo del 2017</!-->
         <pattern>FUNCION_LISTAR_EVENTO2 ^ dia * de * del *</pattern>
         <template>
             <srai>
@@ -355,7 +354,6 @@
         <template><srai>FUNCION_TAMAÑO_EVENTO2 <get name="argumento"/></srai></template>
     </category>
     <category>
-       <!-->EJ: que eventos tengo el dia 20 de mayo del 2017</!-->
         <pattern>FUNCION_TAMAÑO_EVENTO2 ^ dia * de * del *</pattern>
         <template>
             <srai>
@@ -708,5 +706,165 @@
         <that>DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA, O UN CONTACTO</that>
         <template>Deseas eliminar o agregar un contacto</template>
     </category>
+    <!-->Modificar Contacto</!-->
+    <category>
+        <pattern>AGREGAR_CONTACTO_EVENTO</pattern>
+        <template>Quieres agregar o borrar un contacto</template>
+    </category>
+    <!-->Agregar contacto</!-->
+    <category>
+        <pattern>^ [agregar insertar nuevo añadir] ^</pattern>
+        <that>QUIERES AGREGAR O BORRAR UN CONTACTO</that>
+        <template>Dime el apellido del contacto a agregar</template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>DIME EL APELLIDO DEL CONTACTO A AGREGAR</that>
+        <template>
+            <think>
+                <set var="a"><star/></set>
+                <condition var="a">
+                   <li value="NORESP">
+                       <set var="resultado">Error. El apellido ingresado no es valido</set>
+                        <set name="topic">unknown</set>
+                   </li>
+                   <li>
+                        <set var="nombre"><map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map></set>
+                        <condition var="nombre">
+                           <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
+                                <set var="resultado">El contacto no existe en la agenda.</set>
+                                <set name="topic">unknown</set>
+                           </li>
+                           <li>
+                                <set var="apellido"><srai>ponerbarrabaja <star/></srai></set>
+                                <set var="contactos_en_evento">
+                                    <map name="evento_persona"><get name="fecha_evento"/>_<get name="hora_evento"/></map>
+                                </set>
+                                <!-->contador para cuando no hay contactos en evento</!-->
+                                <set var="contador">
+                                    <srai>COUNT <get var="contactos_en_evento"/></srai>
+                                </set>
+                                <condition var="contador">
+                                    <li value="0">
+                                        <set var="encontrado">0</set>
+                                    </li>
+                                    <li>
+                                       <!-->Si no esta vacio, se busca si ya esta el contacto</!-->
+                                        <set var="encontrado">
+                                            <srai>FINDITEM <get var="apellido"/> IN <get var="contactos_en_evento"/></srai>
+                                        </set>
+                                    </li>
+                                </condition>
+                                <condition var="encontrado">
+                                    <li value="0">
+                                       <!-->Si no esta, se agrega</!-->
+                                        <modifymap>
+                                            <name>evento_persona</name>
+                                            <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                            <value><get var="contactos_en_evento"/> <get var="apellido"/></value>
+                                        </modifymap>
+                                        <set var="resultado">Listo, Deseas seguir modificando contactos</set>
+                                    </li>
+                                    <li>
+                                        <set var="resultado">El contacto ya se encuentra en el evento.</set>
+                                        <set name="topic">unknown</set>
+                                    </li>
+                                </condition>
+                           </li>
+                       </condition>
+                   </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <!-->Eliminar contacto de evento</!-->
+    <category>
+        <pattern>^ [borrar eliminar quitar sacar] ^</pattern>
+        <that>QUIERES AGREGAR O BORRAR UN CONTACTO</that>
+        <template>Dime el apellido del contacto a eliminar</template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>DIME EL APELLIDO DEL CONTACTO A ELIMINAR</that>
+        <template>
+            <think>
+                <set var="a"><star/></set>
+                <condition var="a">
+                   <li value="NORESP">
+                       <set var="resultado">Error. El apellido ingresado no es valido</set>
+                        <set name="topic">unknown</set>
+                   </li>
+                   <li>
+                        <set var="nombre"><map name="contacto_nombre"><srai>ponerbarrabaja <star/></srai></map></set>
+                        <condition var="nombre">
+                           <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
+                                <set var="resultado">El contacto no existe en la agenda.</set>
+                                <set name="topic">unknown</set>
+                           </li>
+                           <li>
+                                <set var="apellido"><srai>ponerbarrabaja <star/></srai></set>
+                                <set var="contactos_en_evento">
+                                    <map name="evento_persona"><get name="fecha_evento"/>_<get name="hora_evento"/></map>
+                                </set>
+                                <!-->contador para cuando no hay contactos en evento</!-->
+                                <set var="contador">
+                                    <srai>COUNT <get var="contactos_en_evento"/></srai>
+                                </set>
+                                <condition var="contador">
+                                    <li value="0">
+                                        <set var="encontrado">0</set>
+                                    </li>
+                                    <li>
+                                       <!-->Si no esta vacio, se busca si ya esta el contacto</!-->
+                                        <set var="encontrado">
+                                            <srai>FINDITEM <get var="apellido"/> IN <get var="contactos_en_evento"/></srai>
+                                        </set>
+                                    </li>
+                                </condition>
+                                <condition var="encontrado">
+                                    <li value="0">
+                                       <!-->Si no esta, ERROR</!-->
+                                       <set var="resultado">El contacto no se encuentra en el evento.</set>
+                                       <set name="topic">unknown</set>
+                                    </li>
+                                    <li>
+                                        <set var="contactos_en_evento">
+                                            <srai>REMOVEITEM <get var="encontrado"/> IN <get var="contactos_en_evento"/></srai>
+                                        </set>
+                                        <modifymap>
+                                            <name>evento_persona</name>
+                                            <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                            <value><get var="contactos_en_evento"/></value>
+                                        </modifymap>
+                                        <set var="resultado">Listo, Deseas seguir modificando contactos</set>
+                                    </li>
+                                </condition>
+                           </li>
+                       </condition>
+                   </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <category>
+        <pattern>^ [si claro obvio ok] ^</pattern>
+        <that>LISTO, DESEAS SEGUIR MODIFICANDO CONTACTOS</that>
+        <template>
+            <srai>AGREGAR_CONTACTO_EVENTO</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>^ [no nunca] ^</pattern>
+        <that>LISTO, DESEAS SEGUIR MODIFICANDO CONTACTOS</that>
+        <template>
+            <think>
+                <set name="topic">unknown</set>
+            </think>
+            Perfecto.
+        </template>
+    </category>
+
 </topic>
 </aiml>

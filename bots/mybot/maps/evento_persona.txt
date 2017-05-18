@@ -26,4 +26,4 @@
 17_5_2017_22_00:salinas_soto saavedra
 17_5_2017_18_30:salinas_sotosaavedra
 20_5_2017_10_00:
-20_5_2017_23_30:salinas_soto saavedra
+20_5_2017_23_30:salinas_soto apellido_dos saavedra
