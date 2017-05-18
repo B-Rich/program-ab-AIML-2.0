@@ -631,10 +631,77 @@
             <get var="resultado"/>
         </template>
     </category>
+    <!-->Modificar hora</!-->
     <category>
         <pattern>^ hora ^</pattern>
         <that>DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA, O UN CONTACTO</that>
         <template>Ingresa la nueva hora</template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA LA NUEVA HORA</that>
+        <template>
+            <think>
+               <!-->Se revisa que la hora sea valida</!-->
+                <set name="hora_evento_nuevo"><srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai></set>
+                <set name="pos_hora_nuevo">
+                    <map name="fecha_horas">
+                        <get name="hora_evento_nuevo"/>
+                    </map>
+                </set>
+                <condition name="pos_hora_nuevo">
+                    <li value="unknown">
+                        <set var="resultado">Hora invalida. Accion cancelada.</set>
+                        <set name="topic">unknown</set>
+                    </li>
+                    <li>
+                        <set var="listado"><map name="evento"><get name="fecha_evento"/></map></set>
+                        <set var="evento">
+                            <srai>SELECTITEM <get name="pos_hora_nuevo"/> IN <get var="listado"/></srai>
+                        </set>
+                        <condition var="evento">
+                            <li value="null">
+                                <set name="nombre_evento">
+                                    <srai>SELECTITEM <get name="pos_hora"/> IN <map name="evento"><get name="fecha_evento"/></map></srai>
+                                </set>
+                                <!-->Se actualiza la nueva hora</!-->
+                                <set var="listado_nuevo">
+                                    <srai>CHANGEITEM <get name="pos_hora_nuevo"/> BY <get name="nombre_evento"/> IN <get var="listado"/></srai>
+                                </set>
+                                <set var="listado_nuevo">
+                                    <srai>CHANGEITEM <get name="pos_hora"/> BY null IN <get var="listado_nuevo"/></srai>
+                                </set>
+                                <modifymap>
+                                    <name>evento</name>
+                                    <key><get name="fecha_evento"/></key>
+                                    <value><get var="listado_nuevo"/></value>
+                                </modifymap>
+                                <set var="contactos">
+                                    <map name="evento_persona"><get name="fecha_evento"/>_<get name="hora_evento"/></map>
+                                </set>
+                                <addtomap>
+                                    <name>evento_persona</name>
+                                    <key><get name="fecha_evento"/>_<get name="hora_evento_nuevo"/></key>
+                                    <value><get var="contactos"/></value>
+                                </addtomap>
+                                <!-->Se actualiza los contactos de la hora antigua</!-->
+                                <removefrommap>
+                                    <name>evento_persona</name>
+                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                </removefrommap>
+                                <set var="resultado">Evento Modificado</set>
+                                <set name="topic">unknown</set>
+                            </li>
+                            <li>
+                                <set var="resultado">No es posible modificar ya que existe un evento a esta hora</set>
+                                <set name="topic">unknown</set>
+                            </li>
+                        </condition>
+                    </li>
+               </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
     </category>
     <category>
         <pattern>^ contacto ^</pattern>
