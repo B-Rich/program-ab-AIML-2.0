@@ -409,5 +409,129 @@
             <get var="resultado"/>
         </template>
     </category>
+    <!-->Modificar Evento</!-->
+    <category>
+        <pattern>FUNCION_MODIFICAR_EVENTO</pattern>
+        <template>Indica la fecha del evento</template>
+    </category>
+    <category>
+        <pattern>* de * del *</pattern>
+        <that>INDICA LA FECHA DEL EVENTO</that>
+        <template>
+            <srai>
+                MODIFICAR_VERIFICAR <star index="1"/> <map name="fecha_meses"><star index="2"/></map> <star index="3"/>
+            </srai>
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INDICA LA FECHA DEL EVENTO</that>
+        <template><srai>MODIFICAR_VERIFICAR <star/></srai></template>
+    </category>
+    <category>
+        <pattern>MODIFICAR_VERIFICAR *</pattern>
+        <that>INDICA LA FECHA DEL EVENTO</that>
+        <template>
+            <think>
+               <!-->La fecha se deja en forma 12 10 2017, y despues en validate se revisa que sea valida, y se deja en 12_10_2017</!-->
+                <set name="fecha_evento"><srai>quitarespacios <srai>ponerbarrabaja <star/></srai></srai></set>
+                <set var="validate"><srai>validarfechacustom <get name="fecha_evento"/></srai></set>
+                <condition var="validate">
+                    <li value="NO">
+                        <set var="resultado">Fecha no valida. Accion cancelada.</set>
+                        <set name="topic">unknown</set>
+                    </li>
+                    <li>
+                        <set name="fecha_evento"><get var="validate"/></set>
+                        <set var="eventos"><map name="evento"><get name="fecha_evento"/></map></set>
+                        <!-->Se verifica si existe la key en esta fecha</!-->
+                        <condition var="eventos">
+                            <li value="unknown">
+                                <set var="resultado">No existen eventos en esta fecha</set>
+                                <set name="topic">unknown</set>
+                            </li>
+                            <li>
+                                <set var="resultado">Ingresa la hora</set>
+                            </li>
+                        </condition>
+                    </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA LA HORA</that>
+        <template>
+            <think>
+               <!-->Se revisa que la hora sea valida</!-->
+                <set name="hora_evento"><srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai></set>
+                <set name="pos_hora">
+                    <map name="fecha_horas">
+                        <get name="hora_evento"/>
+                    </map>
+                </set>
+                <condition name="pos_hora">
+                    <li value="unknown">
+                        <set var="resultado">Hora invalida. Accion cancelada.</set>
+                        <set name="topic">unknown</set>
+                    </li>
+                    <li>
+                        <set var="listado"><map name="evento"><get name="fecha_evento"/></map></set>
+                        <set var="evento">
+                            <srai>SELECTITEM <get name="pos_hora"/> IN <get var="listado"/></srai>
+                        </set>
+                        <condition var="evento">
+                            <li value="null">
+                                <set var="resultado">No existe un evento a esta hora en la fecha indicada</set>
+                                <set name="topic">unknown</set>
+                            </li>
+                            <li>
+                                <set var="resultado">Desea modificar el titulo, la hora, o un contacto</set>
+                            </li>
+                        </condition>
+                    </li>
+               </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <category>
+        <pattern>^ titulo ^</pattern>
+        <that>DESEA MODIFICAR EL TITULO, LA HORA, O UN CONTACTO</that>
+        <template>Ingresa el nuevo titulo</template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA EL NUEVO TITULO</that>
+        <template>
+            <think>
+                <set var="eventos"><map name="evento"><get name="fecha_evento"/></map></set>
+                <set var="edit">
+                    <srai>CHANGEITEM <get name="pos_hora"/> BY <srai>ponerbarrabaja <star/></srai> IN <get var="eventos"/></srai>
+                </set>
+
+                <modifymap>
+                    <name>evento</name>
+                    <key><get name="fecha_evento"/></key>
+                    <value><get var="edit"/></value>
+                </modifymap>
+                <set var="resultado">Evento modificado correctamente</set>
+                <set name="topic">unknown</set>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <category>
+        <pattern>^ hora ^</pattern>
+        <that>DESEA MODIFICAR EL TITULO, LA HORA, O UN CONTACTO</that>
+        <template>Ingresa la nueva hora</template>
+    </category>
+    <category>
+        <pattern>^ contacto ^</pattern>
+        <that>DESEA MODIFICAR EL TITULO, LA HORA, O UN CONTACTO</that>
+        <template>Deseas eliminar o agregar un contacto</template>
+    </category>
 </topic>
 </aiml>
