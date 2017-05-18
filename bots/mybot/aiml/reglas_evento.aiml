@@ -488,7 +488,7 @@
                                 <set name="topic">unknown</set>
                             </li>
                             <li>
-                                <set var="resultado">Desea modificar el titulo, la hora, o un contacto</set>
+                                <set var="resultado">Desea modificar el titulo, la fecha, la hora, o un contacto</set>
                             </li>
                         </condition>
                     </li>
@@ -497,9 +497,10 @@
             <get var="resultado"/>
         </template>
     </category>
+    <!-->Modificar titulo</!-->
     <category>
         <pattern>^ titulo ^</pattern>
-        <that>DESEA MODIFICAR EL TITULO, LA HORA, O UN CONTACTO</that>
+        <that>DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA, O UN CONTACTO</that>
         <template>Ingresa el nuevo titulo</template>
     </category>
     <category>
@@ -523,14 +524,121 @@
             <get var="resultado"/>
         </template>
     </category>
+    <!-->Modificar fecha</!-->
+    <category>
+        <pattern>^ fecha ^</pattern>
+        <that>DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA, O UN CONTACTO</that>
+        <template>Ingresa la nueva fecha</template>
+    </category>
+    <category>
+        <pattern>* de * del *</pattern>
+        <that>INGRESA LA NUEVA FECHA</that>
+        <template>
+            <srai>
+                MODIFICAR_VERIFICAR2 <star index="1"/> <map name="fecha_meses"><star index="2"/></map> <star index="3"/>
+            </srai>
+        </template>
+    </category>
+    <category>
+        <pattern>*</pattern>
+        <that>INGRESA LA NUEVA FECHA</that>
+        <template><srai>MODIFICAR_VERIFICAR2 <star/></srai></template>
+    </category>
+    <category>
+        <pattern>MODIFICAR_VERIFICAR2 *</pattern>
+        <that>INGRESA LA NUEVA FECHA</that>
+        <template>
+            <think>
+               <!-->La fecha se deja en forma 12 10 2017, y despues en validate se revisa que sea valida, y se deja en 12_10_2017</!-->
+                <set var="fecha_evento_nuevo"><srai>quitarespacios <srai>ponerbarrabaja <star/></srai></srai></set>
+                <set var="validate"><srai>validarfechacustom <get var="fecha_evento_nuevo"/></srai></set>
+                <condition var="validate">
+                    <li value="NO">
+                        <set var="resultado">Fecha no valida. Accion cancelada.</set>
+                        <set name="topic">unknown</set>
+                    </li>
+                    <li>
+                        <set var="fecha_evento_nuevo"><get var="validate"/></set>
+                        <set var="creado"><map name="evento"><get var="fecha_evento_nuevo"/></map></set>
+                        <set var="listado">null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null</set>
+                        <!-->Se revisa si la fecha ya esta creada</!-->
+                        <condition var="creado">
+                            <li value="unknown">
+                                <addtomap>
+                                    <name>evento</name>
+                                    <key><get var="fecha_evento_nuevo"/></key>
+                                    <value><get var="listado"/></value>
+                                </addtomap>
+                            </li>
+                            <li>
+                                <set var="listado"><get var="creado"/></set>
+                            </li>
+                        </condition>
+                        <set var="creado">
+                            <srai>SELECTITEM <get name="pos_hora"/> IN <get var="listado"/></srai>
+                        </set>
+                        <condition var="creado">
+                            <li value="null">
+                                <set name="nombre_evento">
+                                    <srai>SELECTITEM <get name="pos_hora"/> IN <map name="evento"><get name="fecha_evento"/></map></srai>
+                                </set>
+                                <!-->Se actualiza la nueva fecha</!-->
+                                <set var="listado_nuevo">
+                                    <srai>CHANGEITEM <get name="pos_hora"/> BY <get name="nombre_evento"/> IN <get var="listado"/></srai>
+                                </set>
+                                <modifymap>
+                                    <name>evento</name>
+                                    <key><get var="fecha_evento_nuevo"/></key>
+                                    <value><get var="listado_nuevo"/></value>
+                                </modifymap>
+                                <set var="contactos">
+                                    <map name="evento_persona"><get name="fecha_evento"/>_<get name="hora_evento"/></map>
+                                </set>
+                                <addtomap>
+                                    <name>evento_persona</name>
+                                    <key><get var="fecha_evento_nuevo"/>_<get name="hora_evento"/></key>
+                                    <value><get var="contactos"/></value>
+                                </addtomap>
+                                <!-->Se actualiza la fecha antigua</!-->
+                                <set var="listado">
+                                    <map name="evento"><get name="fecha_evento"/></map>
+                                </set>
+                                <set name="nombre_evento">null</set>
+                                <set var="listado_antiguo">
+                                    <srai>CHANGEITEM <get name="pos_hora"/> BY <get name="nombre_evento"/> IN <get var="listado"/></srai>
+                                </set>
+                                <modifymap>
+                                    <name>evento</name>
+                                    <key><get name="fecha_evento"/></key>
+                                    <value><get var="listado_antiguo"/></value>
+                                </modifymap>
+                                <removefrommap>
+                                    <name>evento_persona</name>
+                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                </removefrommap>
+
+                                <set var="resultado">Evento Modificado</set>
+                                <set name="topic">unknown</set>
+                            </li>
+                            <li>
+                                <set var="resultado">Ya existe un evento a esa hora en este dia.</set>
+                                <set name="topic">unknown</set>
+                            </li>
+                        </condition>
+                    </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
     <category>
         <pattern>^ hora ^</pattern>
-        <that>DESEA MODIFICAR EL TITULO, LA HORA, O UN CONTACTO</that>
+        <that>DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA, O UN CONTACTO</that>
         <template>Ingresa la nueva hora</template>
     </category>
     <category>
         <pattern>^ contacto ^</pattern>
-        <that>DESEA MODIFICAR EL TITULO, LA HORA, O UN CONTACTO</that>
+        <that>DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA, O UN CONTACTO</that>
         <template>Deseas eliminar o agregar un contacto</template>
     </category>
 </topic>
