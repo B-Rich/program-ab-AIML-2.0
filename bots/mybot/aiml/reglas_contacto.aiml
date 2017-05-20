@@ -172,20 +172,40 @@
         <pattern>*</pattern>
         <that>INGRESA EL NOMBRE DEL CONTACTO</that>
         <template>
-           <think>
-               <set name="nombre"><srai>ponerbarrabaja <star/></srai></set>
-           </think>
-            Ingresa la DIRECCION del CONTACTO 
+            <think>
+                <set var="a"><star/></set>
+                <condition var="a">
+                   <li value="NORESP">
+                        <set var="resultado">Error. El nombre ingresado no es valido</set>
+                        <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                   </li>
+                   <li>
+                        <set name="nombre"><srai>ponerbarrabaja <star/></srai></set>
+                        <set var="resultado">Ingresa la DIRECCION del CONTACTO</set>
+                   </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
         </template>
     </category>
     <category>
         <pattern>*</pattern>
         <that>INGRESA LA DIRECCION DEL CONTACTO</that>
         <template>
-           <think>
-               <set name="direccion"><srai>ponerbarrabaja <star/></srai></set>
-           </think>
-            Ingresa el TELEFONO del CONTACTO 
+            <think>
+                <set var="a"><star/></set>
+                <condition var="a">
+                   <li value="NORESP">
+                        <set var="resultado">Error. Direccion ingresada no es valida</set>
+                        <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                   </li>
+                   <li>
+                        <set name="direccion"><srai>ponerbarrabaja <star/></srai></set>
+                        <set var="resultado">Ingresa el TELEFONO del CONTACTO </set>
+                   </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
         </template>
     </category>
     <category>
@@ -193,26 +213,36 @@
         <that>INGRESA EL TELEFONO DEL CONTACTO</that>
         <template>
             <think>
-                <set name="telefono"><srai>ponerbarrabaja <star/></srai></set> <!-->Se colocan '_' en los espacios</!-->
-                <!-->Añadimos los valores a los maps</!-->
-                <addtomap>
-                    <name>contacto_nombre</name>
-                    <key><get name="apellido"/></key>
-                    <value><get name="nombre"/></value>
-                </addtomap>
-                <addtomap>
-                    <name>contacto_direccion</name>
-                    <key><get name="apellido"/></key>
-                    <value><get name="direccion"/></value>
-                </addtomap>
-                <addtomap>
-                    <name>contacto_telefono</name>
-                    <key><get name="apellido"/></key>
-                    <value><get name="telefono"/></value>
-                </addtomap>
-                <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                <set var="a"><star/></set>
+                <condition var="a">
+                   <li value="NORESP">
+                        <set var="resultado">Error. Telefono ingresado no es valido</set>
+                        <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                   </li>
+                   <li>
+                        <set name="telefono"><srai>ponerbarrabaja <star/></srai></set>
+                        <!-->Añadimos los valores a los maps</!-->
+                        <addtomap>
+                            <name>contacto_nombre</name>
+                            <key><get name="apellido"/></key>
+                            <value><get name="nombre"/></value>
+                        </addtomap>
+                        <addtomap>
+                            <name>contacto_direccion</name>
+                            <key><get name="apellido"/></key>
+                            <value><get name="direccion"/></value>
+                        </addtomap>
+                        <addtomap>
+                            <name>contacto_telefono</name>
+                            <key><get name="apellido"/></key>
+                            <value><get name="telefono"/></value>
+                        </addtomap>
+                        <set var="resultado">He agregado correctamente el contacto a tu agenda. </set>
+                        <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                   </li>
+                </condition>
             </think>
-            He agregado correctamente el contacto a tu agenda.
+            <get var="resultado"/>
         </template>
     </category>
     <!--> MODIFICAR CONTACTO</!-->
@@ -277,14 +307,24 @@
         <pattern>MODIFICAR_UN_CONTACTO *</pattern>
         <template>
             <think>
-                <modifymap>
-                    <name>contacto_<get name="opcion"/></name>
-                    <key><get name="apellido"/></key>
-                    <value><srai>ponerbarrabaja <star/></srai></value>
-                </modifymap>
-                <set name="topic">unknown</set>
+                <set var="a"><star/></set>
+                <condition var="a">
+                   <li value="NORESP">
+                        <set var="resultado">Error. Texto ingresado no es valido</set>
+                        <set name="topic">unknown</set> <!-- TERMINO EL TOPIC DE CONTACTO -->
+                   </li>
+                   <li>
+                        <modifymap>
+                            <name>contacto_<get name="opcion"/></name>
+                            <key><get name="apellido"/></key>
+                            <value><srai>ponerbarrabaja <star/></srai></value>
+                        </modifymap>
+                        <set name="topic">unknown</set>
+                        <set var="resultado">Se ha modificado el contacto.</set>
+                   </li>
+                </condition>
             </think>
-            Se ha modificado el contacto.
+           <get var="resultado"/>
         </template>
     </category>
     <!--> ENTREGAR TAMAÑO DE LA AGENDA</!-->
@@ -410,7 +450,7 @@
     </category>
     <category>
         <pattern>^ [no arrepenti nunca] ^</pattern>
-        <that>ESTAS SEGURO DE ELIMINAR UN CONTACTO</that>
+        <that>ESTAS SEGURO DE ELIMINAR EL CONTACTO</that>
         <template>
             Esta bien, el contacto no fue eliminado.
             <think><set name="topic">unknown</set></think>
