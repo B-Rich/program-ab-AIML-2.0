@@ -363,7 +363,6 @@
         <pattern>^ [si claro] ^</pattern>
         <that>ESTAS SEGURO DE ELIMINAR EL CONTACTO</that>
         <template>
-           <get name="apellido"/>
             <think>
                 <removefrommap>
                     <name>contacto_direccion</name>
@@ -377,6 +376,33 @@
                     <name>contacto_nombre</name>
                     <key><get name="apellido"/></key>
                 </removefrommap>
+                <!-->Eliminar contacto de los eventos. Recorre los eventos, y revisa si esta para eliminarlo</!-->
+                <set var="aqui"><readkeys>evento_persona</readkeys></set>
+                <set var="evento"><srai>ITERATE <get var="aqui"/></srai></set>
+                <condition var="evento">
+                    <li value="$"></li>
+                    <li>
+                        <set var="contactos"><map name="evento_persona"><get var="evento"/></map></set>
+                        <set var="posicion">
+                            <srai>FINDITEM <get name="apellido"/> IN <get var="contactos"/></srai>
+                        </set>
+                        <condition var="posicion">
+                            <li value="0"></li>
+                            <li>
+                                <set var="contactos">
+                                    <srai>REMOVEITEM <get var="posicion"/> IN <get var="contactos"/></srai>
+                                </set>
+                                <modifymap>
+                                    <name>evento_persona</name>
+                                    <key><get var="evento"/></key>
+                                    <value><get var="contactos"/></value>
+                                </modifymap>
+                            </li>
+                        </condition>
+                        <set var="evento"><srai>NEXT</srai></set>
+                        <loop/>
+                    </li>
+                </condition>
                 <set name="topic">unknown</set>
             </think>
             Perfecto, contacto <get name="apellido"/> eliminado.
