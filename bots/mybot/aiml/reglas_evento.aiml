@@ -592,6 +592,9 @@
                                 <set var="contactos">
                                     <map name="evento_persona"><get name="fecha_evento"/>_<get name="hora_evento"/></map>
                                 </set>
+                                <condition var="contactos">
+                                    <li value="unknown"><set var="contactos"></set></li>
+                                </condition>
                                 <addtomap>
                                     <name>evento_persona</name>
                                     <key><get var="fecha_evento_nuevo"/>_<get name="hora_evento"/></key>
