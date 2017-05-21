@@ -44,11 +44,19 @@
     </category>
     <category>
         <pattern>PROXIMO_EVENTO ^ de *</pattern>
-        <template>PROXIMO_EVENTO2 <star index="2"/></template>
+        <template>
+            <srai>
+                PROXIMO_EVENTO2 <star index="2"/>
+            </srai>
+        </template>
     </category>
     <category>
         <pattern>PROXIMO_EVENTO ^ del dia * de * de+ *</pattern>
-        <template>PRXIMO_EVENTO2 <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/></template>
+        <template>
+            <srai>
+                PROXIMO_EVENTO2 <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
+            </srai>
+        </template>
     </category>
     <category>
         <pattern>PROXIMO_EVENTO2 *</pattern>
@@ -66,16 +74,71 @@
                         <set var="compare">
                             <srai>COMPARE <get var="fecha"/> WITH <get var="fecha_hoy"/></srai>
                         </set>
+                        <!-->Si es el dia de hoy, me interesa la hora actual</!-->
                         <condition var="compare">
                             <li value="YES">
-                                <!-->Si es el dia de hoy, me interesa la hora actual</!-->
+                                <!-->Me interesa el primer caracter de los minutos</!-->
+                                <set var="minutos">
+                                    <srai>SELECTITEM 1 IN <srai>deletrea <date jformat="mm"/></srai></srai>
+                                </set>
+                                <!-->Redondeo a 00 o 30</!-->
+                                <set var="minutos">
+                                    <map name="fecha_minutos"><get var="minutos"/></map>
+                                </set>
+                                <!-->Obtengo la posicion de la hora</!-->
+                                <set var="hora_pos">
+                                    <map name="fecha_horas"><date jformat="HH"/>_<get var="minutos"/></map>
+                                </set>
+                                <!-->Avanzo en uno la posicion, ya que piden prox evento</!-->
+                                <set var="hora_pos">
+                                    <map name="successor"><get var="hora_pos"/></map>
+                                </set>
+                            </li>
+                            <li>
+                                <!-->Si es otro dia, seteo la hora_pos en 1 (00:00)</!-->
+                                <set var="hora_pos">1</set>
+                            </li>
+                        </condition>
+                        <set var="eventos"><map name="evento"><get var="fecha"/></map></set>
+                        <condition var="eventos">
+                            <li value="unknown"><set var="resultado">No tienes eventos este dia.</set></li>
+                            <li>
+                                <!-->A continuacion se avanza hora_pos hasta encontrar un evento</!-->
+                                <condition var="hora_pos">
+                                    <li value="49">
+                                        <!-->Cuando se pasa de los 48 posiciones de hora</!-->
+                                        <set var="resultado">No tienes proximos este dia.</set>
+                                    </li>
+                                    <li value="#">
+                                        <!-->Cuando se encontro un evento que no es null, y es siguiente</!-->
+                                    </li>
+                                    <li>
+                                        <set var="evento">
+                                            <srai>SELECTITEM <get var="hora_pos"/> IN <get var="eventos"/></srai>
+                                        </set>
+                                        <condition var="evento">
+                                            <li value="null">
+                                                <set var="hora_pos">
+                                                    <map name="successor"><get var="hora_pos"/></map>
+                                                </set>
+                                            </li>
+                                            <li>
+                                                <set var="resultado">
+                                                    Tienes <get var="evento"/> a las <srai>SELECTITEM <get var="hora_pos"/> IN <readkeys>fecha_horas</readkeys></srai>
+                                                </set>
+                                                <set var="hora_pos">#</set>
+                                            </li>
+                                        </condition>
+                                        <loop/>
+                                    </li>
+                                </condition>
                             </li>
                         </condition>
                     </li>
                 </condition>
                 <set name="topic">unknown</set>
             </think>
-
+            <get var="resultado"/>
         </template>
     </category>
 </topic>

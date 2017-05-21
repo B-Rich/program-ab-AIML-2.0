@@ -35,7 +35,7 @@
 <category>
     <pattern>abcdf</pattern>
     <template>
-
+        <date jformat="HH"/>
     </template>
 </category>
 </aiml>
