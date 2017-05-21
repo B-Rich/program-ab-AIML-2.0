@@ -606,7 +606,25 @@
 
 	<!-->Validar fecha CUSTOM</!-->
 	<category>
-	    <pattern>validarfechacustom * * *</pattern>
+	    <pattern>validarfechacustom *</pattern>
+	    <template>
+            <think>
+                <set var="argumento"><star/></set>
+                <condition var="argumento">
+                    <li value="hoy">
+                        <set var="argumento"><srai>quitarespacios <date jformat="d/M/yyyy"/></srai></set>
+                    </li>
+                    <li value="mañana">
+                        <set var="argumento"><srai>quitarespacios <date jformat="d/M/yyyy"/></srai></set>
+                        <set var="argumento"><srai>quitarespacios <srai>TOMORROW <get var="argumento"/></srai></srai></set>
+                    </li>
+                </condition>
+	        </think>
+	        <srai>validarfechacustom2 <get var="argumento"/></srai>
+	    </template>
+	</category>
+	<category>
+	    <pattern>validarfechacustom2 * * *</pattern>
 	    <template>
 	        <think>
                 <set var="resultado"></set>

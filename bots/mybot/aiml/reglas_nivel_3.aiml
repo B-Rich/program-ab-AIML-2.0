@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+
+<category>
+    <pattern>^ dia libre ^</pattern>
+    <template>
+        <think>
+            <set var="fecha_evento"><srai>ponerbarrabaja <srai>quitarespacios <date jformat="d/M/yyyy"/></srai></srai></set>
+            <set var="evento"><srai>ITERATE <map name="evento"><get var="fecha_evento"/></map></srai></set>
+            <set var="resultado"></set>
+            <set var="flag">FALSE</set>
+            <condition var="evento">
+                <li value="$"></li>
+                <li value="unknown"></li>
+                <li value="null">
+                    <set var="evento"><srai>NEXT</srai></set>
+                    <loop/>
+                </li>
+                <li>
+                    <set var="flag">TRUE</set>
+                    <set var="evento"><srai>NEXT</srai></set>
+                    <loop/>
+                </li>
+            </condition>
+            <condition var="flag">
+                <li value="FALSE">
+                    <set var="resultado">Si.</set>
+                </li>
+                <li value="TRUE">
+                    <set var="resultado">No.</set>
+                </li>
+            </condition>
+        </think>
+        <get var="resultado"/>
+    </template>
+</category>
+
+<topic name="evento">
+    <category>
+        <pattern>FUNCION_PROXIMO_EVENTO</pattern>
+        <template>
+            <srai>PROXIMO_EVENTO <get name="argumento"/></srai>
+        </template>
+    </category>
+    <category>
+        <pattern>PROXIMO_EVENTO ^ de *</pattern>
+        <template>PROXIMO_EVENTO2 <star index="2"/></template>
+    </category>
+    <category>
+        <pattern>PROXIMO_EVENTO ^ del dia * de * de+ *</pattern>
+        <template>PRXIMO_EVENTO2 <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/></template>
+    </category>
+    <category>
+        <pattern>PROXIMO_EVENTO2 *</pattern>
+        <template>
+            <think>
+                <set var="fecha"><srai>quitarespacios <srai>ponerbarrabaja <star/></srai></srai></set>
+                <set var="validate"><srai>validarfechacustom <get var="fecha"/></srai></set>
+                <condition var="validate">
+                    <li value="NO">
+                        <set var="resultado">Fecha no valida. Accion cancelada.</set>
+                    </li>
+                    <li>
+                        <set var="fecha"><get var="validate"/></set>
+                        <set var="fecha_hoy"><srai>ponerbarrabaja <srai>quitarespacios <date jformat="d/M/yyyy"/></srai></srai></set>
+                        <set var="compare">
+                            <srai>COMPARE <get var="fecha"/> WITH <get var="fecha_hoy"/></srai>
+                        </set>
+                        <condition var="compare">
+                            <li value="YES">
+                                <!-->Si es el dia de hoy, me interesa la hora actual</!-->
+                            </li>
+                        </condition>
+                    </li>
+                </condition>
+                <set name="topic">unknown</set>
+            </think>
+
+        </template>
+    </category>
+</topic>
+
+
+
+</aiml>

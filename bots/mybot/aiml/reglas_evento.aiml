@@ -52,6 +52,13 @@
                                 <set var="palabra"><srai>ITERATE <star/></srai></set>
                             </think>
                        </li>
+                       <li value="tamaño">
+                            <think>
+                                <set var="archivo">proximo</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
                        <li>
                             <think>
                                 <set var="palabra">#NOENCONTRADO</set>
