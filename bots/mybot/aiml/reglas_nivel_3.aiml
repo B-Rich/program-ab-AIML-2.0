@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
 
+<!-->Dia libre</!-->
 <category>
     <pattern>^ dia libre ^</pattern>
     <template>
@@ -35,7 +36,91 @@
     </template>
 </category>
 
+<!-->Con quien reunirse</!-->
+<category>
+    <pattern>^ [reunir reunion] *</pattern>
+    <template>
+        <srai>FUNCION_REUNIR <star index="2"/></srai>
+    </template>
+</category>
+<category>
+    <pattern>^ [reunir reunion] el dia *</pattern>
+    <template>
+        <srai>FUNCION_REUNIR <star index="2"/></srai>
+    </template>
+</category>
+<category>
+    <pattern>^ [reunir reunion] el dia * de * del *</pattern>
+    <template>
+        <srai>
+            FUNCION_REUNIR <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
+        </srai>
+    </template>
+</category>
+<category>
+    <pattern>FUNCION_REUNIR *</pattern>
+    <template>
+            <think>
+                <set var="fecha"><srai>quitarespacios <srai>ponerbarrabaja <star/></srai></srai></set>
+                <set var="validate"><srai>validarfechacustom <get var="fecha"/></srai></set>
+                <condition var="validate">
+                    <li value="NO">
+                        <set var="resultado">Fecha no valida. Accion cancelada.</set>
+                    </li>
+                    <li>
+                        <set var="fecha"><get var="validate"/></set>
+                        <set var="hora"><srai>ITERATE <readkeys>fecha_horas</readkeys></srai></set>
+                        <set var="flag">FALSE</set>
+                        <set var="resultado">unknown</set>
+                        <condition var="hora">
+                            <li value="$">
+                                <condition var="flag">
+                                    <li value="FALSE">
+                                        <set var="resultado">Nadie</set>
+                                    </li>
+                                    <li>
+                                        <!-->Formateo la salida</!-->
+                                        <set var="apellido"><srai>ITERATE <get var="resultado"/></srai></set>
+                                        <set var="resultado"></set>
+                                        <condition var="apellido">
+                                            <li value="$"></li>
+                                            <li>
+                                                <set var="resultado"><get var="resultado"/> , <srai>quitarespacios <get var="apellido"/></srai></set>
+                                                <set var="apellido"><srai>NEXT</srai></set>
+                                                <loop/>
+                                            </li>
+                                        </condition>
+                                        <!-->Quito la primera coma</!-->
+                                        <set var="resultado"><srai>REMOVEITEM 1 IN <get var="resultado"/></srai></set>
+                                    </li>
+                                </condition>
+                            </li>
+                            <li>
+                                <set var="contactos">
+                                    <map name="evento_persona"><get var="fecha"/>_<get var="hora"/></map>
+                                </set>
+                                <condition var="contactos">
+                                    <li value="unknown"></li>
+                                    <li>
+                                        <set var="flag">TRUE</set>
+                                        <set var="resultado">
+                                            <srai>AGREGAR_SIN_DUPLICADOS <get var="contactos"/> EN <get var="resultado"/></srai>
+                                        </set>
+                                    </li>
+                                </condition>
+                                <set var="hora"><srai>NEXT</srai></set>
+                                <loop/>
+                            </li>
+                        </condition>
+                    </li>
+                </condition>
+                <set name="topic">unknown</set>
+            </think>
+            Tienes reunion con: <get var="resultado"/>
+        </template>
+</category>
 <topic name="evento">
+    <!-->Proximo Evento INCOMPLETO</!-->
     <category>
         <pattern>FUNCION_PROXIMO_EVENTO</pattern>
         <template>

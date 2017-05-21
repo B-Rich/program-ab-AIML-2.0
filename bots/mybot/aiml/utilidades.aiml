@@ -669,4 +669,38 @@
 	        <get var="resultado"/>
 	    </template>
 	</category>
+
+	<!-->agregar sin duplicados</!-->
+	<category>
+	    <pattern>AGREGAR_SIN_DUPLICADOS * EN *</pattern>
+	    <template>
+	        <think>
+                <set var="nuevos"><star index="1"/></set>
+	            <set var="list"><star index="2"/></set>
+	            <condition var="list">
+	                <li value="unknown">
+	                    <set var="list"><get var="nuevos"/></set>
+	                </li>
+	                <li>
+	                    <set var="nuevo"><srai>ITERATE <get var="nuevos"/></srai></set>
+                        <condition var="nuevo">
+                            <li value="$"></li>
+                            <li>
+                                <set var="encontrado">
+                                    <srai>FINDITEM <get var="nuevo"/> IN <get var="list"/></srai>
+                                </set>
+                                <condition var="encontrado">
+                                    <li value="0"><set var="list"><get var="list"/> <get var="nuevo"/></set></li>
+                                </condition>
+                                <set var="nuevo"><srai>NEXT</srai></set>
+                                <loop/>
+                            </li>
+                        </condition>
+	                </li>
+	            </condition>
+
+	        </think>
+	        <get var="list"/>
+	    </template>
+	</category>
 </aiml>
