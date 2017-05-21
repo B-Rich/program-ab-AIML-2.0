@@ -682,7 +682,7 @@
 	                    <set var="list"><get var="nuevos"/></set>
 	                </li>
 	                <li>
-	                    <set var="nuevo"><srai>ITERATE <get var="nuevos"/></srai></set>
+	                    <set var="nuevo"><srai>ITERATE2 <get var="nuevos"/></srai></set>
                         <condition var="nuevo">
                             <li value="$"></li>
                             <li>
@@ -692,7 +692,7 @@
                                 <condition var="encontrado">
                                     <li value="0"><set var="list"><get var="list"/> <get var="nuevo"/></set></li>
                                 </condition>
-                                <set var="nuevo"><srai>NEXT</srai></set>
+                                <set var="nuevo"><srai>NEXT2</srai></set>
                                 <loop/>
                             </li>
                         </condition>
@@ -702,5 +702,35 @@
 	        </think>
 	        <get var="list"/>
 	    </template>
+	</category>
+	<!-->ITERATOR SECUNDARIO</!-->
+	<!-- Regla que permite iterar sobre las distintas palabras de una frase (esta asociado con NEXT)-->
+	<category>
+		<pattern>ITERATE2 *</pattern>
+		<template>
+			<think>
+				<set name="iterator2">
+					<star/>
+				</set>
+			</think>
+			<srai>NEXT2</srai>
+		</template>
+	</category>
+	<!-- Regla que permite iterar sobre las distintas palabras de una frase (esta asociado con ITERATE)-->
+	<category>
+		<pattern>NEXT2</pattern>
+		<template>
+			<condition name="iterator2">
+				<li value="$">$</li>
+				<li>
+					<srai>TOP <get name="iterator2"/></srai>
+					<think>
+						<set name="iterator2">
+							<srai>REMAIN <get name="iterator2"/></srai>
+						</set>
+					</think>
+				</li>
+			</condition>
+		</template>
 	</category>
 </aiml>
