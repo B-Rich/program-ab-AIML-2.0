@@ -429,14 +429,28 @@
                         <condition var="posicion">
                             <li value="0"></li>
                             <li>
-                                <set var="contactos">
-                                    <srai>REMOVEITEM <get var="posicion"/> IN <get var="contactos"/></srai>
+                                <set var="contador">
+                                    <srai>COUNT <get var="contactos"/></srai>
                                 </set>
-                                <modifymap>
-                                    <name>evento_persona</name>
-                                    <key><get var="evento"/></key>
-                                    <value><get var="contactos"/></value>
-                                </modifymap>
+                                <condition var="contador">
+                                    <li value="1">
+                                        <removefrommap>
+                                            <name>evento_persona</name>
+                                            <key><get var="evento"/></key>
+                                        </removefrommap>
+                                    </li>
+                                    <li>
+                                        <set var="contactos">
+                                            <srai>REMOVEITEM <get var="posicion"/> IN <get var="contactos"/></srai>
+                                        </set>
+                                        <modifymap>
+                                            <name>evento_persona</name>
+                                            <key><get var="evento"/></key>
+                                            <value><get var="contactos"/></value>
+                                        </modifymap>
+                                    </li>
+                                </condition>
+
                             </li>
                         </condition>
                         <set var="evento"><srai>NEXT</srai></set>

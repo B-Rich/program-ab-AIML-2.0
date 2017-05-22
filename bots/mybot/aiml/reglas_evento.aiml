@@ -210,11 +210,6 @@
                                     <key><get name="fecha_evento"/></key>
                                     <value><get var="listado"/></value>
                                 </modifymap>
-                                <addtomap>
-                                    <name>evento_persona</name>
-                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
-                                    <value></value>
-                                </addtomap>
                                 <set var="resultado">Quieres asociar un contacto al evento</set>
                             </li>
                             <li>
@@ -293,11 +288,23 @@
                                 <condition var="encontrado">
                                     <li value="0">
                                        <!-->Si no esta, se agrega</!-->
-                                        <modifymap>
-                                            <name>evento_persona</name>
-                                            <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
-                                            <value><get var="contactos_en_evento"/> <get var="apellido"/></value>
-                                        </modifymap>
+                                       <condition var="contactos_en_evento">
+                                           <li value="unknown">
+                                                <addtomap>
+                                                    <name>evento_persona</name>
+                                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                                    <value><get var="apellido"/></value>
+                                                </addtomap>
+                                           </li>
+                                           <li>
+                                                <modifymap>
+                                                    <name>evento_persona</name>
+                                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                                    <value><get var="contactos_en_evento"/> <get var="apellido"/></value>
+                                                </modifymap>
+                                           </li>
+                                       </condition>
+
                                         <set var="resultado">Quieres asociar un nuevo contacto al evento</set>
                                     </li>
                                     <li>
@@ -324,6 +331,14 @@
         <template>
             <srai>
                 FUNCION_LISTAR_EVENTO2 dia <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
+            </srai>
+        </template>
+    </category>
+    <category>
+        <pattern>FUNCION_LISTAR_EVENTO2 ^ dia de *</pattern>
+        <template>
+            <srai>
+                FUNCION_LISTAR_EVENTO2 dia <star index="2"/>
             </srai>
         </template>
     </category>
@@ -384,6 +399,14 @@
         <template>
             <srai>
                 FUNCION_TAMAÑO_EVENTO2 dia <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
+            </srai>
+        </template>
+    </category>
+    <category>
+        <pattern>FUNCION_TAMAÑO_EVENTO2 ^ dia de *</pattern>
+        <template>
+            <srai>
+                FUNCION_TAMAÑO_EVENTO2 dia <star index="2"/>
             </srai>
         </template>
     </category>
@@ -815,11 +838,23 @@
                                 <condition var="encontrado">
                                     <li value="0">
                                        <!-->Si no esta, se agrega</!-->
-                                        <modifymap>
-                                            <name>evento_persona</name>
-                                            <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
-                                            <value><get var="contactos_en_evento"/> <get var="apellido"/></value>
-                                        </modifymap>
+                                       <condition var="contactos_en_evento">
+                                           <li value="unknown">
+                                                <addtomap>
+                                                    <name>evento_persona</name>
+                                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                                    <value><get var="apellido"/></value>
+                                                </addtomap>
+                                           </li>
+                                           <li>
+                                               <modifymap>
+                                                    <name>evento_persona</name>
+                                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                                    <value><get var="contactos_en_evento"/> <get var="apellido"/></value>
+                                                </modifymap>
+                                           </li>
+                                       </condition>
+
                                         <set var="resultado">Listo, Deseas seguir modificando contactos</set>
                                     </li>
                                     <li>
@@ -889,11 +924,23 @@
                                         <set var="contactos_en_evento">
                                             <srai>REMOVEITEM <get var="encontrado"/> IN <get var="contactos_en_evento"/></srai>
                                         </set>
-                                        <modifymap>
-                                            <name>evento_persona</name>
-                                            <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
-                                            <value><get var="contactos_en_evento"/></value>
-                                        </modifymap>
+                                        <condition var="contador">
+                                            <li value="1">
+                                                <!-->Si era el unico contacto, se elimina del map</!-->
+                                                <removefrommap>
+                                                    <name>evento_persona</name>
+                                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                                </removefrommap>
+                                            </li>
+                                            <li>
+                                                <modifymap>
+                                                    <name>evento_persona</name>
+                                                    <key><get name="fecha_evento"/>_<get name="hora_evento"/></key>
+                                                    <value><get var="contactos_en_evento"/></value>
+                                                </modifymap>
+                                            </li>
+                                        </condition>
+
                                         <set var="resultado">Listo, Deseas seguir modificando contactos</set>
                                     </li>
                                 </condition>
