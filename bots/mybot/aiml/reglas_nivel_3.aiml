@@ -120,7 +120,7 @@
         </template>
 </category>
 <topic name="evento">
-    <!-->Proximo Evento INCOMPLETO</!-->
+    <!-->Proximo Evento</!-->
     <category>
         <pattern>FUNCION_PROXIMO_EVENTO</pattern>
         <template>
@@ -209,7 +209,7 @@
                                             </li>
                                             <li>
                                                 <set var="resultado">
-                                                    Tienes <get var="evento"/> a las <srai>SELECTITEM <get var="hora_pos"/> IN <readkeys>fecha_horas</readkeys></srai>
+                                                    Tienes <srai>quitarespacios <get var="evento"/></srai> a las <srai>ponerdospuntos <map name="fecha_horas2"><get var="hora_pos"/></map></srai> horas.
                                                 </set>
                                                 <set var="hora_pos">#</set>
                                             </li>
@@ -226,7 +226,87 @@
             <get var="resultado"/>
         </template>
     </category>
-    <!-->Cuando me junto con</!-->
+
+    <!-->Ultimo evento</!-->
+    <category>
+        <pattern>FUNCION_ULTIMO_EVENTO</pattern>
+        <template>
+            <srai>ULTIMO_EVENTO <get name="argumento"/></srai>
+        </template>
+    </category>
+    <category>
+        <pattern>ULTIMO_EVENTO ^ de *</pattern>
+        <template>
+            <srai>
+                ULTIMO_EVENTO2 <star index="2"/>
+            </srai>
+        </template>
+    </category>
+    <category>
+        <pattern>ULTIMO_EVENTO ^ +el dia * de * de+ *</pattern>
+        <template>
+            <srai>
+                ULTIMO_EVENTO2 <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
+            </srai>
+        </template>
+    </category>
+    <category>
+        <pattern>ULTIMO_EVENTO2 *</pattern>
+        <template>
+            <think>
+                <set var="fecha"><srai>quitarespacios <srai>ponerbarrabaja <star/></srai></srai></set>
+                <set var="validate"><srai>validarfechacustom <get var="fecha"/></srai></set>
+                <condition var="validate">
+                    <li value="NO">
+                        <set var="resultado">Fecha no valida. Accion cancelada.</set>
+                    </li>
+                    <li>
+                        <set var="fecha"><get var="validate"/></set>
+                        <set var="hora_pos">48</set>
+                        <set var="eventos"><map name="evento"><get var="fecha"/></map></set>
+                        <condition var="eventos">
+                            <li value="unknown"><set var="resultado">No tienes eventos este dia.</set></li>
+                            <li>
+                                <!-->A continuacion se avanza hora_pos hasta encontrar un evento</!-->
+                                <condition var="hora_pos">
+                                    <li value="0">
+                                        <!-->Cuando se pasa de los 48 posiciones de hora</!-->
+                                        <set var="resultado">No tienes proximos este dia.</set>
+                                    </li>
+                                    <li value="#">
+                                        <!-->Cuando se encontro un evento que no es null, y es el ultimo</!-->
+                                    </li>
+                                    <li>
+                                        <set var="evento">
+                                            <srai>SELECTITEM <get var="hora_pos"/> IN <get var="eventos"/></srai>
+                                        </set>
+                                        <condition var="evento">
+                                            <li value="null">
+                                                <!-->Disminuyo en 1 la hora_pos</!-->
+                                                <set var="hora_pos">
+                                                    <map name="predecessor"><get var="hora_pos"/></map>
+                                                </set>
+                                            </li>
+                                            <li>
+                                                <set var="resultado">
+                                                    Tienes <srai>quitarespacios <get var="evento"/></srai> a las <srai>ponerdospuntos <map name="fecha_horas2"><get var="hora_pos"/></map></srai> horas.
+                                                </set>
+                                                <set var="hora_pos">#</set>
+                                            </li>
+                                        </condition>
+                                        <loop/>
+                                    </li>
+                                </condition>
+                            </li>
+                        </condition>
+                    </li>
+                </condition>
+                <set name="topic">unknown</set>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <!-->Cuando me junto con...</!-->
     <category>
         <pattern>FUNCION_CUANDO_EVENTO</pattern>
         <template><srai>CUANDO_EVENTO <get name="argumento"/></srai></template>

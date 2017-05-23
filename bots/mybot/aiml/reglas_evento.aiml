@@ -25,6 +25,7 @@
                 <li value="#NOENCONTRADO">Esta opcion no esta disponible para los Eventos.</li>
                 <li value="$">
                    <condition var="archivo">
+                      <!-->Recorro todos los archivos con las opciones</!-->
                        <li value="agregar">
                             <think>
                                 <set var="archivo">modificar</set>
@@ -63,6 +64,13 @@
                        <li value="proximo">
                             <think>
                                 <set var="archivo">cuando</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li value="cuando">
+                            <think>
+                                <set var="archivo">ultimo</set>
                                 <set var="aqui"><readset><get var="archivo"/></readset></set>
                                 <set var="palabra"><srai>ITERATE <star/></srai></set>
                             </think>
