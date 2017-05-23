@@ -309,12 +309,100 @@
     <!-->Cuando me junto con...</!-->
     <category>
         <pattern>FUNCION_CUANDO_EVENTO</pattern>
-        <template><srai>CUANDO_EVENTO <get name="argumento"/></srai></template>
+        <template>
+            <think>
+                <!-->Defino variables 'name', para cuando se quieren mas alternativas, iterar con los mismos valores, y desde el punto en que se dejo de iterar</!-->
+                <set name="fechas_horas"><readkeys>evento_persona</readkeys></set>
+                <set name="evento"><srai>ITERATE <get name="fechas_horas"/></srai></set>
+                <set name="alternativa">unknown</set>
+            </think>
+            <srai>CUANDO_EVENTO <get name="argumento"/></srai>
+        </template>
     </category>
     <category>
         <pattern>CUANDO_EVENTO ^ con *</pattern>
-        <template><star index="2"/></template>
+        <template>
+            <think>
+                <set name="apellido"><srai>ponerbarrabaja <star index="2"/></srai></set>
+                <set var="nombre">
+                  <map name="contacto_nombre"><srai>ponerbarrabaja <get name="apellido"/></srai></map>
+                </set>
+                <condition var="nombre">
+                    <li value="unknown"> <!-->unknown significa que no existe en el map</!-->
+                        <set var="resultado">El contacto no existe</set>
+                        <set name="topic">unknown</set>
+                    </li>
+                    <li>
+                        <set var="resultado"><srai>CUANDO_EVENTO2</srai></set>
+                    </li>
+                   </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
     </category>
+    <category>
+        <pattern>CUANDO_EVENTO2</pattern>
+        <template>
+            <think>
+                <condition name="evento">
+                    <li value="$">
+                       <!-->Se revisa si se pidio otra alternativa o no, para mostrar que no se tiene eventos, o si no existen MAS eventos</!-->
+                        <condition name="alternativa">
+                            <li value="unknown">
+                                <set var="resultado">No tienes eventos con <srai>quitarespacios <get name="apellido"/></srai></set>
+                                <set name="topic">unknown</set>
+                            </li>
+                            <li>
+                                <set var="resultado">No tienes mas eventos con <srai>quitarespacios <get name="apellido"/></srai></set>
+                                <set name="topic">unknown</set>
+                            </li>
+                        </condition>
+                    </li>
+                    <li value="#">
+                        <set name="alternativa">cuando</set>
+                        <set var="resultado">Tienes un evento con <get name="apellido"/> el <srai>fechayhora <srai>quitarespacios <get var="eventoaux"/></srai></srai></set>
+                        <set name="evento"><get var="eventoaux"/></set>
+                        <set name="evento"><srai>NEXT</srai></set>
+                    </li>
+                    <li>
+                        <set var="esta">
+                            <srai>FINDITEM <get name="apellido"/> IN <map name="evento_persona"><get name="evento"/></map></srai>
+                        </set>
+                        <condition var="esta">
+                            <li value="0">
+                                <set name="evento"><srai>NEXT</srai></set>
+                            </li>
+                            <li>
+                                <!-->Si lo encuentra, almaceno el evento en una variable auxiliar, y se setea en '#'</!-->
+                                <set var="eventoaux"><get name="evento"/></set>
+                                <set name="evento">#</set>
+                            </li>
+                        </condition>
+                        <loop/>
+                    </li>
+                </condition>
+            </think>
+            <get var="resultado"/>
+        </template>
+    </category>
+    <category>
+        <pattern>^ otra alternativa ^</pattern>
+        <template>
+            <think>
+                <condition name="alternativa">
+                    <li value="unknown">
+                        <set var="respuesta">I have no answer for that.</set>
+                    </li>
+                    <li>
+                        <set var="respuesta"><srai><get name="alternativa"/>_EVENTO2</srai></set>
+                    </li>
+                </condition>
+            </think>
+            <get var="respuesta"/>
+        </template>
+
+    </category>
+
 </topic>
 
 

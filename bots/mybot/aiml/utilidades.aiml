@@ -813,4 +813,12 @@
 	<get var="solucion"/>
 	</template>
 	</category>
+
+	<!-->Entrega fecha y hora de un list de palabras</!-->
+	<category>
+	    <pattern>fechayhora * * * * *</pattern>
+	    <template>
+	        <star index="1"/>/<star index="2"/>/<star index="3"/> a las <star index="4"/>:<star index="5"/>.
+	    </template>
+	</category>
 </aiml>
