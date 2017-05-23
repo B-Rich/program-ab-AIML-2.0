@@ -628,8 +628,31 @@
 	    <template>
 	        <think>
                 <set var="resultado"></set>
-	            <set var="dia"><star index="1"/></set>
-	            <set var="mes"><star index="2"/></set>
+                <!-->Para los dias y meses, elimino el 0 del principio si es que esta</!-->
+	            <set var="dia"><explode><star index="1"/></explode></set>
+	            <set var="primera"><srai>TOP <get var="dia"/></srai></set>
+	            <condition var="primera">
+	                <li value="0">
+                        <set var="dia">
+                           <srai>REMAIN <get var="dia"/></srai>
+                        </set>
+	                </li>
+	                <li>
+	                    <set var="dia"><star index="1"/></set>
+	                </li>
+	            </condition>
+	            <set var="mes"><explode><star index="2"/></explode></set>
+	            <set var="primera"><srai>TOP <get var="mes"/></srai></set>
+	            <condition var="primera">
+	                <li value="0">
+	                    <set var="mes">
+	                        <srai>REMAIN <get var="mes"/></srai>
+	                    </set>
+	                </li>
+	                <li>
+	                    <set var="mes"><star index="2"/></set>
+	                </li>
+	            </condition>
 	            <set var="año"><map name="fecha_años"><star index="3"/></map></set>
 	            <condition var="año">
 	                <li value="unknown">

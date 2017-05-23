@@ -38,19 +38,19 @@
 
 <!-->Con quien reunirse</!-->
 <category>
-    <pattern>^ [reunir reunion] *</pattern>
+    <pattern>^ [reunir reunion reunire juntar junto] *</pattern>
     <template>
         <srai>FUNCION_REUNIR <star index="2"/></srai>
     </template>
 </category>
 <category>
-    <pattern>^ [reunir reunion] el dia *</pattern>
+    <pattern>^ [reunir reunion reunire juntar junto] el dia *</pattern>
     <template>
         <srai>FUNCION_REUNIR <star index="2"/></srai>
     </template>
 </category>
 <category>
-    <pattern>^ [reunir reunion] el dia * de * del *</pattern>
+    <pattern>^ [reunir reunion reunire juntar junto] el dia * de * del *</pattern>
     <template>
         <srai>
             FUNCION_REUNIR <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
@@ -136,7 +136,7 @@
         </template>
     </category>
     <category>
-        <pattern>PROXIMO_EVENTO ^ del dia * de * de+ *</pattern>
+        <pattern>PROXIMO_EVENTO ^ +el dia * de * de+ *</pattern>
         <template>
             <srai>
                 PROXIMO_EVENTO2 <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
