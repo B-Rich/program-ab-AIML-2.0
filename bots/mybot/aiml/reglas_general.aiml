@@ -33,9 +33,9 @@
     </template>
 </category>
 <category>
-    <pattern>abcdf</pattern>
+    <pattern>abcdf *</pattern>
     <template>
-        <date jformat="HH"/>
+        <srai>PARTE_DEL_DIA <star/></srai>
     </template>
 </category>
 </aiml>

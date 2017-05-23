@@ -756,4 +756,26 @@
 			</condition>
 		</template>
 	</category>
+	<!--> Regla para partes del dia</!-->
+	<category>
+	    <pattern>PARTE_DEL_DIA *</pattern>
+	    <template>
+            <think>
+                <set var="parte"><star/></set>
+                <condition var="parte">
+                    <li value="mañana">
+                        <set var="resultado"><readset>mañana</readset></set>
+                    </li>
+                    <li value="tarde">
+                        <set var="resultado"><readset>tarde</readset></set>
+                    </li>
+                    <li value="noche">
+                        <set var="resultado"><readset>noche</readset></set>
+                    </li>
+                    <li><set var="resultado">NO</set></li>
+                </condition>
+            </think>
+	    <get var="resultado"/>
+	    </template>
+	</category>
 </aiml>

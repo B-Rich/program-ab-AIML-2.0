@@ -19,6 +19,7 @@
                 <set var="archivo">agregar</set>
                 <set var="aqui"><readset><get var="archivo"/></readset></set>
                 <set var="palabra"><srai>ITERATE <star/></srai></set>
+                <set name="argumento"><star/></set>
             </think>
             <condition var="palabra">
                 <li value="#NOENCONTRADO">Esta opcion no esta disponible para los Eventos.</li>
@@ -55,6 +56,13 @@
                        <li value="tamaño">
                             <think>
                                 <set var="archivo">proximo</set>
+                                <set var="aqui"><readset><get var="archivo"/></readset></set>
+                                <set var="palabra"><srai>ITERATE <star/></srai></set>
+                            </think>
+                       </li>
+                       <li value="proximo">
+                            <think>
+                                <set var="archivo">cuando</set>
                                 <set var="aqui"><readset><get var="archivo"/></readset></set>
                                 <set var="palabra"><srai>ITERATE <star/></srai></set>
                             </think>

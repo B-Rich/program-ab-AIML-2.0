@@ -38,19 +38,19 @@
 
 <!-->Con quien reunirse</!-->
 <category>
-    <pattern>^ [reunir reunion reunire juntar junto] *</pattern>
+    <pattern>^ [reunir reunion reunire reunirme juntar junto] *</pattern>
     <template>
         <srai>FUNCION_REUNIR <star index="2"/></srai>
     </template>
 </category>
 <category>
-    <pattern>^ [reunir reunion reunire juntar junto] el dia *</pattern>
+    <pattern>^ [reunir reunion reunire reunirme juntar junto] el dia *</pattern>
     <template>
         <srai>FUNCION_REUNIR <star index="2"/></srai>
     </template>
 </category>
 <category>
-    <pattern>^ [reunir reunion reunire juntar junto] el dia * de * del *</pattern>
+    <pattern>^ [reunir reunion reunire reunirme juntar junto] el dia * de * del *</pattern>
     <template>
         <srai>
             FUNCION_REUNIR <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/>
@@ -225,6 +225,15 @@
             </think>
             <get var="resultado"/>
         </template>
+    </category>
+    <!-->Cuando me junto con</!-->
+    <category>
+        <pattern>FUNCION_CUANDO_EVENTO</pattern>
+        <template><srai>CUANDO_EVENTO <get name="argumento"/></srai></template>
+    </category>
+    <category>
+        <pattern>CUANDO_EVENTO ^ con *</pattern>
+        <template><star index="2"/></template>
     </category>
 </topic>
 
