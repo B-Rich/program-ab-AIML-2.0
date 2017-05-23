@@ -821,4 +821,10 @@
 	        <star index="1"/>/<star index="2"/>/<star index="3"/> a las <star index="4"/>:<star index="5"/>.
 	    </template>
 	</category>
+	<category>
+	    <pattern>fechasinhora * * *</pattern>
+	    <template>
+	        <star index="1"/>/<star index="2"/>/<star index="3"/>
+	    </template>
+	</category>
 </aiml>

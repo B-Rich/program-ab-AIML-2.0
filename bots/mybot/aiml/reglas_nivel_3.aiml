@@ -119,7 +119,164 @@
             Tienes reunion con: <get var="resultado"/>
         </template>
 </category>
+
+
+<!-->Hueco libre hoy/mañana/fecha y parte del dia</!-->
+<category>
+    <pattern>^ hueco libre *</pattern>
+    <template><srai>HUECO_LIBRE ARG_1 <star index="2"/> ARG_2 dia_entero</srai></template>
+</category>
+<category>
+    <pattern>^ hueco libre el dia * de * de+ *</pattern>
+    <template><srai>HUECO_LIBRE ARG_1 <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/> ARG_2 dia_entero</srai></template>
+</category>
+<category>
+    <pattern>^ hueco libre * por la *</pattern>
+    <template><srai>HUECO_LIBRE ARG_1 <star index="2"/> ARG_2 <star index="3"/></srai></template>
+</category>
+<category>
+    <pattern>^ hueco libre el dia * de * de+ * por la *</pattern>
+    <template><srai>HUECO_LIBRE ARG_1 <star index="2"/> <map name="fecha_meses"><star index="3"/></map> <star index="4"/> ARG_2 <star index="5"/></srai></template>
+</category>
+<category>
+    <pattern>HUECO_LIBRE ARG_1 * ARG_2 *</pattern>
+    <template>
+        <think>
+            <set name="alternativa">unknown</set>
+            <set var="fecha"><srai>quitarespacios <srai>ponerbarrabaja <star index="1"/></srai></srai></set>
+            <set var="validate"><srai>validarfechacustom <get var="fecha"/></srai></set>
+            <condition var="validate">
+                <li value="NO">
+                    <set var="resultado">Fecha no valida. Accion cancelada.</set>
+                </li>
+                <li>
+                    <set name="fecha"><get var="validate"/></set>
+                    <set var="cuando"><star index="2"/></set>
+                    <condition var="cuando">
+                        <li value="dia_entero">
+                            <set name="inicio">1</set>
+                            <set name="fin">49</set>
+                            <set name="flag_noche">FALSE</set>
+                            <set var="resultado"><srai>LIBRE_EVENTO2</srai></set>
+                        </li>
+                        <li value="mañana">
+                            <!-->Desde las 04:00 a las 12:00</!-->
+                            <set name="inicio">9</set>
+                            <set name="fin">25</set>
+                            <set name="flag_noche">FALSE</set>
+                            <set var="resultado"><srai>LIBRE_EVENTO2</srai></set>
+                        </li>
+                        <li value="tarde">
+                            <!-->Desde las 12:00 hasta las 20:00</!-->
+                            <set name="inicio">25</set>
+                            <set name="fin">41</set>
+                            <set name="flag_noche">FALSE</set>
+                            <set var="resultado"><srai>LIBRE_EVENTO2</srai></set>
+                        </li>
+                        <li value="noche">
+                            <!-->Desde las 00:00 hasta las 04:00, y con el flag despues se maneja desde las 20:00 hasta las 24:00</!-->
+                            <set name="inicio">1</set>
+                            <set name="fin">9</set>
+                            <set name="flag_noche">TRUE</set>
+                            <set var="resultado"><srai>LIBRE_EVENTO2</srai></set>
+                        </li>
+                        <li>
+                            <set var="resultado">La parte del dia no es valida</set>
+                        </li>
+                    </condition>
+                </li>
+            </condition>
+        </think>
+        <get var="resultado"/>
+    </template>
+</category>
+<category>
+    <pattern>LIBRE_EVENTO2</pattern>
+    <template>
+       <think>
+            <set var="eventos"><map name="evento"><get name="fecha"/></map></set>
+            <set var="estado">siguiente</set>
+            <condition var="eventos">
+                <li value="unknown">
+                    <set var="resultado">No tienes eventos este dia</set>
+                </li>
+                <li>
+                    <condition var="estado">
+                       <!-->FIN SIGNIFICA QUE SE LLEGO INICIO = FIN</!-->
+                        <li value="FIN">
+                           <!-->Se revisa si se pidio otra alternativa o no, para mostrar que no se tiene huecos, o si no existen MAS huecos</!-->
+                            <condition name="alternativa">
+                                <li value="unknown">
+                                    <set var="resultado">No tienes huecos libres el dia <srai>fechasinhora <srai>quitarespacios <get name="fecha"/></srai></srai></set>
+                                    <set name="topic">unknown</set>
+                                </li>
+                                <li>
+                                    <set var="resultado">No tienes mas huecos libres el dia <srai>fechasinhora <srai>quitarespacios <get name="fecha"/></srai></srai></set>
+                                    <set name="topic">unknown</set>
+                                </li>
+                            </condition>
+                        </li>
+                        <!-->OK SIGNIFICA QUE SE ENCONTRO UN NULL</!-->
+                        <li value="OK">
+                            <set name="alternativa">libre</set>
+                            <set var="fechahueco"><get name="fecha"/>_<map name="fecha_horas2"><get name="inicio"/></map></set>
+                            <set var="resultado">Tienes un hueco el <srai>fechayhora <srai>quitarespacios <get var="fechahueco"/></srai></srai></set>
+                            <!-->AVANZO INICIO</!-->
+                            <set name="inicio">
+                                <map name="successor"><get name="inicio"/></map>
+                            </set>
+                        </li>
+                        <li>
+                           <!-->REVISO SI EL INICIO ES IGUAL AL FIN</!-->
+                            <set var="comparacion">
+                                <srai>COMPARE <get name="inicio"/> WITH <get name="fin"/></srai>
+                            </set>
+                            <condition var="comparacion">
+                                <!-->SI SON IGUALES, REVISO EL FLAG DE LA NOCHE ESTA ACTIVO, PARA AVANZAR A LA POSICION 41</!-->
+                                <li value="YES">
+                                    <condition name="flag_noche">
+                                        <li value="TRUE">
+                                            <set name="inicio">41</set>
+                                            <set name="flag_noche">FALSE</set>
+                                        </li>
+                                        <li>
+                                            <!-->SETEO EL ESTADO A FIN, YA QUE INICIO = FIN</!-->
+                                            <set var="estado">FIN</set>
+                                        </li>
+                                    </condition>
+                                </li>
+                                <li>
+                                    <!-->REVISO SI EL EVENTO ES NULL</!-->
+                                    <set var="evento">
+                                        <srai>SELECTITEM <get name="inicio"/> IN <get var="eventos"/></srai>
+                                    </set>
+                                    <condition var="evento">
+                                        <li value="null">
+                                            <!-->SETEO ESTADO EN OK</!-->
+                                            <set var="estado">OK</set>
+                                        </li>
+                                        <li>
+                                            <!-->AVANZO INICIO</!-->
+                                            <set name="inicio">
+                                                <map name="successor"><get name="inicio"/></map>
+                                            </set>
+                                        </li>
+                                    </condition>
+                                </li>
+                            </condition>
+                            <loop/>
+                        </li>
+                    </condition>
+                </li>
+            </condition>
+       </think>
+       <get var="resultado"/>
+    </template>
+</category>
+
 <topic name="evento">
+
+
     <!-->Proximo Evento</!-->
     <category>
         <pattern>FUNCION_PROXIMO_EVENTO</pattern>
@@ -192,7 +349,7 @@
                                 <condition var="hora_pos">
                                     <li value="49">
                                         <!-->Cuando se pasa de los 48 posiciones de hora</!-->
-                                        <set var="resultado">No tienes proximos este dia.</set>
+                                        <set var="resultado">No tienes proximos eventos este dia.</set>
                                     </li>
                                     <li value="#">
                                         <!-->Cuando se encontro un evento que no es null, y es siguiente</!-->
@@ -385,26 +542,30 @@
             <get var="resultado"/>
         </template>
     </category>
-    <category>
-        <pattern>^ otra alternativa ^</pattern>
-        <template>
-            <think>
-                <condition name="alternativa">
-                    <li value="unknown">
-                        <set var="respuesta">I have no answer for that.</set>
-                    </li>
-                    <li>
-                        <set var="respuesta"><srai><get name="alternativa"/>_EVENTO2</srai></set>
-                    </li>
-                </condition>
-            </think>
-            <get var="respuesta"/>
-        </template>
 
-    </category>
+
+
+
 
 </topic>
 
+<!-->OTRA ALTERNATIVA</!-->
+<category>
+    <pattern>^ otra alternativa ^</pattern>
+    <template>
+        <think>
+            <condition name="alternativa">
+                <li value="unknown">
+                    <set var="respuesta">I have no answer for that.</set>
+                </li>
+                <li>
+                    <set var="respuesta"><srai><get name="alternativa"/>_EVENTO2</srai></set>
+                </li>
+            </condition>
+        </think>
+        <get var="respuesta"/>
+    </template>
 
+</category>
 
 </aiml>
