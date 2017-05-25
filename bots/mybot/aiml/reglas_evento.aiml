@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
+   <!-->Reglas relacionadas a los eventos, es el mismo procedimiento que en contactos.</!-->
    <category>
         <pattern>^ evento+ ^</pattern>
         <template>
@@ -185,7 +186,9 @@
         <template>
             <think>
                <!-->Se revisa que la hora sea valida, y se crea el evento</!-->
-                <set name="hora_evento"><srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai></set>
+                <set name="hora_evento">
+                    <srai>validarhora <star/></srai>
+                </set>
                 <set name="pos_hora">
                     <map name="fecha_horas">
                         <get name="hora_evento"/>
@@ -438,6 +441,7 @@
                         <set var="resultado">Fecha no valida. Accion cancelada.</set>
                     </li>
                     <li>
+                       <!-->Se itera la fecha del evento, y se revisan los eventos asociados distintos de null</!-->
                         <set var="fecha_evento"><get var="validate"/></set>
                         <set var="evento"><srai>ITERATE <map name="evento"><get var="fecha_evento"/></map></srai></set>
                         <set var="resultado"></set>
@@ -462,6 +466,7 @@
                                 <set var="resultado">No hay eventos este dia.</set>
                             </li>
                             <li value="TRUE">
+                                <!-->Se entrega el contador de los eventos asociados</!-->
                                 <set var="resultado">Tienes <srai>COUNT <get var="resultado"/></srai> Eventos ese dia.</set>
                             </li>
                         </condition>
@@ -529,7 +534,9 @@
         <template>
             <think>
                <!-->Se revisa que la hora sea valida</!-->
-                <set name="hora_evento"><srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai></set>
+                <set name="hora_evento">
+                    <srai>validarhora <star/></srai>
+                </set>
                 <set name="pos_hora">
                     <map name="fecha_horas">
                         <get name="hora_evento"/>
@@ -734,7 +741,9 @@
                    </li>
                    <li>
                         <!-->Se revisa que la hora sea valida</!-->
-                        <set name="hora_evento_nuevo"><srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai></set>
+                        <set name="hora_evento">
+                            <srai>validarhora <star/></srai>
+                        </set>
                         <set name="pos_hora_nuevo">
                             <map name="fecha_horas">
                                 <get name="hora_evento_nuevo"/>
@@ -1043,7 +1052,9 @@
         <template>
             <think>
                <!-->Se revisa que la hora sea valida</!-->
-                <set name="hora_evento"><srai>ponerbarrabaja <srai>quitarespacios <star/></srai></srai></set>
+                <set name="hora_evento">
+                    <srai>validarhora <star/></srai>
+                </set>
                 <set name="pos_hora">
                     <map name="fecha_horas">
                         <get name="hora_evento"/>

@@ -54,6 +54,7 @@
 </category>
 <!-- CONTACTO -->
 <topic name="contacto">
+  <!-->Esta funcion revisa que accion se debera tomar, recorriendo una serie de sets, con palabras que gatillan cada accion</!-->
    <category>
         <pattern>FUNCION_REGLAS_CONTACTO *</pattern>
         <template>
@@ -102,6 +103,7 @@
                    </condition>
                    <loop/>
                 </li>
+                <!-->Cuando se encuentra una coincidencia, se hace el llamado a la funcion relacionada</!-->
                 <li value="#"><srai>FUNCION_<get var="archivo"/>_CONTACTO</srai></li>
                 <li>
                     <think>
@@ -136,6 +138,7 @@
         <that>INGRESA EL APELLIDO DEL CONTACTO</that>
         <template>
           <think>
+             <!-->esta variable revisa que la respuesta no sea vacia</!-->
              <set var="a"><star/></set>
           </think>
            <condition var="a">
@@ -434,6 +437,7 @@
                                 </set>
                                 <condition var="contador">
                                     <li value="1">
+                                        <!-->Si es el unico contacto, se elemina la key del map</!-->
                                         <removefrommap>
                                             <name>evento_persona</name>
                                             <key><get var="evento"/></key>

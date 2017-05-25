@@ -604,6 +604,40 @@
 	</template>
 	</category>
 
+
+
+
+
+    <!-->Validar hora</!-->
+    <category>
+        <pattern>validarhora *</pattern>
+        <template>
+            <think>
+                <!-->Agrego un 0 al inicio si no lo tiene (hora y minuto)</!-->
+                <set var="horamin"><srai>quitarespacios <star index="1"/></srai></set>
+                <set var="hora"><srai>TOP <get var="horamin"/></srai></set>
+                <set var="min"><srai>REMAIN <get var="horamin"/></srai></set>
+	            <set var="cant"><srai>COUNT <srai>deletrea <get var="hora"/></srai></srai></set>
+	            <condition var="cant">
+	                <li value="1">
+                        <set var="hora">
+                           0<get var="hora"/>
+                        </set>
+	                </li>
+	            </condition>
+	            <set var="cant"><srai>COUNT <srai>deletrea <get var="min"/></srai></srai></set>
+	            <condition var="cant">
+	                <li value="1">
+                        <set var="min">
+                           0<get var="min"/>
+                        </set>
+	                </li>
+	            </condition>
+            </think>
+            <get var="hora"/>_<get var="min"/>
+        </template>
+    </category>
+
 	<!-->Validar fecha CUSTOM</!-->
 	<category>
 	    <pattern>validarfechacustom *</pattern>

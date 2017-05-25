@@ -10,6 +10,7 @@
             <set var="evento"><srai>ITERATE <map name="evento"><get var="fecha_evento"/></map></srai></set>
             <set var="resultado"></set>
             <set var="flag">FALSE</set>
+            <!-->Se itera los eventos de la fecha, si es encuentro uno que no es null, se cambia el flag a true</!-->
             <condition var="evento">
                 <li value="$"></li>
                 <li value="unknown"></li>
@@ -237,6 +238,7 @@
                                     <condition name="flag_noche">
                                         <li value="TRUE">
                                             <set name="inicio">41</set>
+                                            <set name="fin">49</set>
                                             <set name="flag_noche">FALSE</set>
                                         </li>
                                         <li>
