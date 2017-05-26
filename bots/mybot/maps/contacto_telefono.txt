@@ -1,12 +1,4 @@
-apellido_uno:Telefono_Uno
-apellido_dos:Telefono_Dos
-apellido_tres:Telefono_Tres
-apellido_cuatro:Telefono_Cuatro
-apellido_cinco:Telefono_Cinco
-apellido_seis:Telefono_Seis
-apellido_siete:Telefono_Siete
-apellido_ocho:Telefono_Ocho
-apellido_nueve:Telefono_Nueve
-salinas_soto:+5431543152
-soto_salinas:+54113214
-saavedra:+6536342
+salinas_soto:+1234567
+soto:+5243141
+saavedra:+53452512
+farias:+12323

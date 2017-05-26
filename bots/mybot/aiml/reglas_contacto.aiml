@@ -498,7 +498,7 @@
                    El contacto no existe.
                </li>
                <li>
-                  <get name="busqueda"/> de <star/>: <get var="resultado"/>
+                  <get name="busqueda"/> de <star/>: <srai>quitarespacios <get var="resultado"/></srai>
                </li>
            </condition>
            <think>

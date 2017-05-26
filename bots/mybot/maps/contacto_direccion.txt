@@ -1,12 +1,4 @@
-apellido_uno:Direccion_Uno
-apellido_dos:Direccion_Dos
-apellido_tres:Direccion_Tres
-apellido_cuatro:Direccion_Cuatro
-apellido_cinco:Direccion_Cinco
-apellido_seis:Direccion_Seis
-apellido_siete:Direccion_Siete
-apellido_ocho:Direccion_Ocho
-apellido_nueve:Direccion_Nueve
-salinas_soto:san_luis
-soto_salinas:Av_Andalucia_12345
-saavedra:San_Elena,_Valparaiso
+salinas_soto:granada_españa
+soto:valdivia_chile
+saavedra:valparaiso_chile
+farias:Av_curico_1231

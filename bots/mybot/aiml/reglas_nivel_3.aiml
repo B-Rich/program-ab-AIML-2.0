@@ -325,7 +325,7 @@
                                 <set var="minutos">
                                     <srai>SELECTITEM 1 IN <srai>deletrea <date jformat="mm"/></srai></srai>
                                 </set>
-                                <!-->Redondeo a 00 o 30</!-->
+                                <!-->Redondeo a 00 o 30 dependiendo del primer digito del minuto</!-->
                                 <set var="minutos">
                                     <map name="fecha_minutos"><get var="minutos"/></map>
                                 </set>

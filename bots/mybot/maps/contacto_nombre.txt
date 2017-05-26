@@ -1,12 +1,4 @@
-apellido_uno:Nombre_Uno
-apellido_dos:Nombre_Dos
-apellido_tres:Nombre_Tres
-apellido_cuatro:Nombre_Cuatro
-apellido_cinco:Nombre_Cinco
-apellido_seis:Nombre_Seis
-apellido_siete:Nombre_Siete
-apellido_ocho:Nombre_Ocho
-apellido_nueve:Nombre_Nueve
-salinas_soto:matias_daniel
-soto_salinas:Daniel_Matias
-saavedra:maria
+salinas_soto:matias
+soto:fernando
+saavedra:maria_josee
+farias:Juan
